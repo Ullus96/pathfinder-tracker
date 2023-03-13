@@ -1,0 +1,38 @@
+.stats {
+	padding: 0.6rem;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.6rem;
+
+	&__item {
+		padding: 0.6rem 0.9rem;
+		border-radius: 0.4rem;
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		cursor: pointer;
+
+		&--wide {
+			width: 100%;
+		}
+
+		&--value {
+			font-weight: 600;
+		}
+
+		&--add {
+			padding-left: 1.1rem;
+			background-color: mix($color-bg-lighter, $color-blue, 85%);
+			color: $color-white;
+			cursor: pointer;
+
+			& i {
+				transition: all 0.1s ease-in-out;
+			}
+
+			&:hover i {
+				transform: scale(1.2);
+			}
+		}
+	}
+}

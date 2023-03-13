@@ -1,0 +1,44 @@
+.header {
+	width: 100%;
+	background: $color-bg-lighter;
+	position: fixed;
+
+	&__content {
+		display: flex;
+		justify-content: flex-end;
+		list-style: none;
+		margin: 0.3rem 1rem;
+		gap: 0.6rem;
+	}
+
+	&__button {
+		background: $color-bg-darkest;
+		padding: 0.4rem 0.6rem;
+		border-radius: 0.6rem;
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		cursor: pointer;
+		transition: all 0.2s ease-in-out;
+
+		&:hover {
+			background: $color-bg-darker;
+		}
+	}
+}
+
+#new-note {
+	color: $color-yellow;
+}
+
+#new-enemy {
+	color: $color-red;
+}
+
+#new-npc {
+	color: $color-blue;
+}
+
+#toggle-menu {
+	color: $color-white;
+}

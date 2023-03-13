@@ -1,0 +1,162 @@
+.modal {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background-color: rgba(mix($color-black, $color-bg-darkest, 90%), 0.7);
+	z-index: 999;
+
+	&__card {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		background-color: $color-bg-lighter;
+		color: $color-white;
+		width: 85%;
+		border-radius: 0.6rem;
+		overflow: hidden;
+	}
+
+	&__header {
+		position: relative;
+		text-align: center;
+		background-color: $color-bg-darkest;
+		padding: 0.6rem;
+	}
+
+	&__close {
+		position: absolute;
+		right: 1.2rem;
+		top: 0.6rem;
+		cursor: pointer;
+	}
+
+	&__content {
+		padding: 0.6rem;
+	}
+
+	// types
+	&__types {
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 0.6rem;
+	}
+
+	&__type {
+		text-align: center;
+	}
+
+	// btns and active
+	& .btn {
+		padding: 0.6rem 0.9rem;
+		border-radius: 0.4rem;
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		background-color: $color-bg-darkest;
+		cursor: pointer;
+		transition: background-color 0.05s ease-in-out;
+
+		&:hover {
+			background-color: mix($color-bg-darkest, $color-blue, 95%);
+		}
+	}
+
+	& .active {
+		background-color: $color-active;
+	}
+
+	// title
+	&__title {
+		text-align: center;
+		margin-bottom: 0.9rem;
+		position: relative;
+
+		&::after {
+			content: '';
+			width: 100%;
+			border-bottom: solid 1px $color-white;
+			opacity: 0.7;
+			position: absolute;
+			left: 0;
+			top: 50%;
+			transform: translateY(-50%);
+			z-index: 1001;
+		}
+
+		&--text {
+			background-color: $color-bg-lighter;
+			width: auto;
+			position: relative;
+			display: inline-block;
+			z-index: 1002;
+			font-weight: 400;
+			padding: 0 1.2rem;
+		}
+	}
+
+	// input
+	&__value {
+		display: flex;
+		align-content: center;
+		gap: 1.2rem;
+		margin-bottom: 0.3rem;
+
+		&:last-child {
+			margin-bottom: 0.9rem;
+		}
+
+		& > p {
+			padding-top: 0.2rem;
+			width: 17.2%;
+		}
+	}
+
+	&__input {
+		flex-grow: 2;
+		padding: 0.3rem 0.9rem;
+		border-radius: 0.4rem;
+		background-color: $color-bg-darkest;
+		transition: background-color 0.05s ease-in-out;
+
+		&:hover {
+			background-color: mix($color-bg-darkest, $color-blue, 95%);
+		}
+	}
+
+	// block, flex and items
+	&__block {
+		margin-bottom: 1.8rem;
+	}
+
+	&__flex {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.6rem;
+		justify-content: space-between;
+	}
+
+	&__item {
+		width: 18.8%;
+		justify-content: center;
+	}
+
+	// bottom btns
+	&__btns {
+		display: flex;
+		justify-content: center;
+		gap: 3rem;
+		padding: 0.6rem 0;
+	}
+
+	& .btn-red {
+		background-color: mix($color-red, $color-bg-darkest, 75%);
+		transition: background-color 0.1s ease-in-out;
+
+		&:hover {
+			background-color: mix($color-red, $color-bg-darkest, 90%);
+		}
+	}
+}
