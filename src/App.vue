@@ -159,163 +159,33 @@
     </ul>
   </header>
   <section class="content">
-    <!-- single person -->
-    <div class="person">
-      <div class="person__header">
-        <div class="person__sort-btn">
-          <i class="fa-solid fa-sort"></i>
-        </div>
-        <div class="person__title bg-blue">
-          <div class="person__name">
-            <i class="fa-solid fa-user"></i>
-            Персонаж
-          </div>
-          <div class="person__edit"><i class="fa-solid fa-bars"></i></div>
-        </div>
-      </div>
-
-      <div class="stats">
-        <!-- armor -->
-        <div class="stats__item bg-blue">
-          <i class="fa-solid fa-shield-halved"></i>
-          <p class="stats__item--value">17</p>
-        </div>
-        <!-- end of armor -->
-        <!-- named with value -->
-        <div class="stats__item bg-green">
-          <i class="fa-solid fa-diamond"></i>
-          <p class="stats__item--name">Focus Points</p>
-          <div class="stats__item--value">
-            <div class="value">
-              <p class="value--current">1</p>
-              <p class="value--breakpoint">/</p>
-              <p class="value--total">3</p>
-            </div>
-          </div>
-        </div>
-        <!-- end of value -->
-        <!-- toggleable -->
-        <div class="stats__item bg-yellow">
-          <i class="fa-solid fa-rotate-left"></i>
-          <p class="stats__item--name">Reaction</p>
-          <div class="stats__item--value">
-            <div class="toggle">
-              <div class="toggle-on"><i class="fa-solid fa-toggle-on"></i></div>
-              <!-- <div class="toggle-off">
-                <i class="fa-solid fa-toggle-off"></i>
-              </div> -->
-            </div>
-          </div>
-        </div>
-        <!-- end of toggleable -->
-        <!-- plus -->
-        <div class="stats__item stats__item--add">
-          <i class="fa-solid fa-plus"></i>
-        </div>
-        <!-- end of plus -->
-      </div>
-    </div>
-    <!-- end of single person -->
-
-    <!-- single person -->
-    <div class="person">
-      <div class="person__header">
-        <div class="person__sort-btn">
-          <i class="fa-solid fa-sort"></i>
-        </div>
-        <div class="person__title bg-red">
-          <div class="person__name">
-            <i class="fa-solid fa-ghost"></i>
-            Лич Бальтазар
-          </div>
-          <div class="person__edit"><i class="fa-solid fa-bars"></i></div>
-        </div>
-      </div>
-
-      <div class="stats">
-        <!-- hp -->
-        <div class="stats__item stats__item--wide bg-red">
-          <i class="fa-solid fa-heart"></i>
-          <div class="stats__item--value">
-            <div class="value">
-              <p class="value--current">27</p>
-              <p class="value--breakpoint">/</p>
-              <p class="value--total">50</p>
-            </div>
-          </div>
-          <div class="health">
-            &nbsp;
-            <div class="health--current-bar"></div>
-            <p class="health--amount">54%</p>
-          </div>
-        </div>
-        <!-- end of hp -->
-        <!-- desc -->
-        <div class="stats__item bg-white">
-          <i class="fa-solid fa-book"></i>
-          <p class="stats__item--name">Нежить</p>
-        </div>
-        <!-- end of desc -->
-        <!-- armor -->
-        <div class="stats__item bg-blue">
-          <i class="fa-solid fa-shield-halved"></i>
-          <p class="stats__item--value">17</p>
-        </div>
-        <!-- end of armor -->
-        <!-- named with value -->
-        <div class="stats__item bg-green">
-          <i class="fa-solid fa-diamond"></i>
-          <p class="stats__item--name">Focus Points</p>
-          <div class="stats__item--value">
-            <div class="value">
-              <p class="value--current">1</p>
-              <p class="value--breakpoint">/</p>
-              <p class="value--total">3</p>
-            </div>
-          </div>
-        </div>
-        <!-- end of value -->
-        <!-- toggleable -->
-        <div class="stats__item bg-yellow">
-          <i class="fa-solid fa-rotate-left"></i>
-          <p class="stats__item--name">Reaction</p>
-          <div class="stats__item--value">
-            <div class="toggle">
-              <div class="toggle-on"><i class="fa-solid fa-toggle-on"></i></div>
-              <!-- <div class="toggle-off">
-                <i class="fa-solid fa-toggle-off"></i>
-              </div> -->
-            </div>
-          </div>
-        </div>
-        <!-- end of toggleable -->
-        <!-- plus -->
-        <div class="stats__item stats__item--add">
-          <i class="fa-solid fa-plus"></i>
-        </div>
-        <!-- end of plus -->
-      </div>
-    </div>
-    <!-- end of single person -->
-    <character :data="characters" :i="0"></character>
+    <character
+      v-for="(data, i) in characters"
+      :key="i"
+      :i="i"
+      :data="data"
+      @removeCharacter="removeCharacter"
+      @removeStat="removeStat"
+    ></character>
   </section>
 </template>
 
 <script>
 import Character from "./components/Character.vue";
+import { ref, reactive } from "vue";
 export default {
   components: { Character },
   setup() {
-    const characters = [
+    const characters = reactive([
       {
         name: "Шпингалет",
         color: "blue",
-        icon: "fa-solid fa-user",
+        icon: "user",
         stats: [
           {
             name: "",
             color: "red",
-            icon: "fa-solid fa-heart",
+            icon: "heart",
             type: "health",
             current: 84,
             max: 100,
@@ -323,7 +193,7 @@ export default {
           {
             name: "DEF",
             color: "white",
-            icon: "fa-solid fa-shield-halved",
+            icon: "shield-halved",
             type: "value",
             current: 1,
             max: "",
@@ -331,7 +201,7 @@ export default {
           {
             name: "",
             color: "blue",
-            icon: "fa-solid fa-dragon",
+            icon: "dragon",
             type: "value",
             current: 1,
             max: 3,
@@ -339,21 +209,91 @@ export default {
           {
             name: "Reaction",
             color: "yellow",
-            icon: "fa-solid fa-rotate-left",
+            icon: "rotate-left",
             type: "toggle",
             current: 0,
             max: "",
           },
         ],
       },
-    ];
-    const i = 0;
+      {
+        name: "Красный Барон",
+        color: "red",
+        icon: "ghost",
+        stats: [
+          {
+            name: "",
+            color: "red",
+            icon: "heart",
+            type: "health",
+            current: 103,
+            max: 250,
+          },
+          {
+            name: "DEF",
+            color: "blue",
+            icon: "shield-halved",
+            type: "value",
+            current: 8,
+            max: "",
+          },
+          {
+            name: "Sp.Points",
+            color: "red",
+            icon: "hat-wizard",
+            type: "value",
+            current: 2,
+            max: 7,
+          },
+          {
+            name: "Enraged",
+            color: "green",
+            icon: "hand-fist",
+            type: "toggle",
+            current: 1,
+            max: "",
+          },
+        ],
+      },
+      {
+        name: "Заметка",
+        color: "yellow",
+        icon: "note",
+        stats: [
+          {
+            name: "Здания можно возводить лишь на проклятой земле",
+            color: "white",
+            icon: "book",
+            type: "value",
+            current: "",
+            max: "",
+          },
+        ],
+      },
+    ]);
 
     function addCharacter() {}
 
+    function addStat() {}
+
+    // we get character index from Character.vue then we remove
+    // certain character from characters array
+    function removeCharacter(charToRemove) {
+      characters.splice(charToRemove, 1);
+    }
+
+    // we get characterIndex from Character.vue and statIdx from Stat.vue
+    // then we remove certain stat from render
+    function removeStat(payload) {
+      characters[payload.charIdx].stats.splice(payload.statIdx, 1);
+    }
+
     return {
       characters,
-      i,
+      addCharacter,
+      addStat,
+      removeCharacter,
+      removeStat,
     };
   },
 };
