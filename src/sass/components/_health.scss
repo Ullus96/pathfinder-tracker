@@ -16,12 +16,12 @@
 	}
 
 	&--current-bar {
-		background: linear-gradient(
-			to right,
-			$color-white 0%,
-			$color-white 54%,
-			transparent 54%
-		);
+		// background: linear-gradient(
+		// 	to right,
+		// 	$color-white 0%,
+		// 	$color-white 54%,
+		// 	transparent 54%
+		// );
 		position: absolute;
 		top: 0;
 		left: 0;

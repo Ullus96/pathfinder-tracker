@@ -397,7 +397,6 @@ h6 {
   z-index: 6;
 }
 .health--current-bar {
-  background: linear-gradient(to right, #fff 0%, #fff 54%, transparent 54%);
   position: absolute;
   top: 0;
   left: 0;

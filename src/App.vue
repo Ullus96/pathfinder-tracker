@@ -297,11 +297,66 @@
       </div>
     </div>
     <!-- end of single person -->
+    <character :data="characters" :i="0"></character>
   </section>
 </template>
 
 <script>
-export default {};
+import Character from "./components/Character.vue";
+export default {
+  components: { Character },
+  setup() {
+    const characters = [
+      {
+        name: "Шпингалет",
+        color: "blue",
+        icon: "fa-solid fa-user",
+        stats: [
+          {
+            name: "",
+            color: "red",
+            icon: "fa-solid fa-heart",
+            type: "health",
+            current: 84,
+            max: 100,
+          },
+          {
+            name: "DEF",
+            color: "white",
+            icon: "fa-solid fa-shield-halved",
+            type: "value",
+            current: 1,
+            max: "",
+          },
+          {
+            name: "",
+            color: "blue",
+            icon: "fa-solid fa-dragon",
+            type: "value",
+            current: 1,
+            max: 3,
+          },
+          {
+            name: "Reaction",
+            color: "yellow",
+            icon: "fa-solid fa-rotate-left",
+            type: "toggle",
+            current: 0,
+            max: "",
+          },
+        ],
+      },
+    ];
+    const i = 0;
+
+    function addCharacter() {}
+
+    return {
+      characters,
+      i,
+    };
+  },
+};
 </script>
 
 <style scoped lang="scss"></style>
