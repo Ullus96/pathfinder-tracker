@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+	</head>
+	<body>
+		<!-- modal start -->
+		<div class="modal" v-if="showModal">
+			<div class="modal__card">
+				<div class="modal__header">
+					<h2>Добавить характеристику</h2>
+					<div class="modal__close">&#10005;</div>
+				</div>
+				<!-- modal main content -->
+				<div class="modal__content">
+					<!-- types start -->
+					<div class="modal__title">
+						<h4 class="modal__title--text">Тип</h4>
+					</div>
+					<div class="modal__types">
+						<div
+							v-for="(type, idx) in modalData.types"
+							:key="idx"
+							class="modal__type btn"
+							:class="idx === modalData.activeType ? 'active' : ''"
+							@click="modalData.activeType = idx"
+						>
+							{{ type }}
+						</div>
+						<div class="modal__type btn">Стат</div>
+						<div class="modal__type btn active">Мин/макс</div>
+						<div class="modal__type btn">Вкл/выкл</div>
+						<div class="modal__type btn">ХП-бар</div>
+					</div>
+					<!-- end of types -->
+
+					<!-- input fields -->
+					<div class="modal__values">
+						<div class="modal__value">
+							<p>Имя:</p>
+							<input
+								class="modal__input"
+								type="text"
+								placeholder="Название (можно пустое)"
+							/>
+						</div>
+						<div class="modal__value">
+							<p>Знач.:</p>
+							<input
+								class="modal__input"
+								type="text"
+								placeholder="Цифровое значение"
+							/>
+						</div>
+						<div class="modal__value">
+							<p>Макс:</p>
+							<input
+								class="modal__input"
+								type="text"
+								placeholder="Максимальное значение"
+							/>
+						</div>
+					</div>
+					<!-- end of input -->
+
+					<!-- icons -->
+					<div class="modal__block">
+						<div class="modal__title">
+							<h4 class="modal__title--text">Иконка</h4>
+						</div>
+						<div class="modal__flex">
+							<div class="modal__item btn">
+								<i class="fa-solid fa-circle"></i>
+							</div>
+							<div class="modal__item btn active">
+								<i class="fa-solid fa-hand-fist"></i>
+							</div>
+							<div class="modal__item btn">
+								<i class="fa-solid fa-hat-wizard"></i>
+							</div>
+							<div class="modal__item btn">
+								<i class="fa-solid fa-dragon"></i>
+							</div>
+							<div class="modal__item btn">
+								<i class="fa-solid fa-dice-d6"></i>
+							</div>
+							<div class="modal__item btn">
+								<i class="fa-solid fa-dice-d20"></i>
+							</div>
+							<div class="modal__item btn">
+								<i class="fa-solid fa-shoe-prints"></i>
+							</div>
+							<div class="modal__item btn">
+								<i class="fa-solid fa-person-running"></i>
+							</div>
+							<div class="modal__item btn"><i class="fa-solid fa-eye"></i></div>
+							<div class="modal__item btn">
+								<i class="fa-solid fa-skull"></i>
+							</div>
+							<div class="modal__item btn">
+								<i class="fa-solid fa-shield-halved"></i>
+							</div>
+							<div class="modal__item btn">
+								<i class="fa-solid fa-rotate-left"></i>
+							</div>
+							<div class="modal__item btn">
+								<i class="fa-solid fa-heart"></i>
+							</div>
+							<div class="modal__item btn">
+								<i class="fa-solid fa-brain"></i>
+							</div>
+							<div class="modal__item btn">
+								<i class="fa-solid fa-book"></i>
+							</div>
+							<div class="modal__item btn">
+								<i class="fa-solid fa-bolt"></i>
+							</div>
+							<div class="modal__item btn">
+								<i class="fa-solid fa-triangle-exclamation"></i>
+							</div>
+							<div class="modal__item btn">
+								<i class="fa-solid fa-diamond"></i>
+							</div>
+							<div class="modal__item btn">
+								<i class="fa-solid fa-square"></i>
+							</div>
+							<div class="modal__item btn">
+								<i class="fa-solid fa-fire"></i>
+							</div>
+						</div>
+					</div>
+					<!-- end of icons -->
+
+					<!-- color picker -->
+					<div class="modal__block">
+						<div class="modal__title">
+							<h4 class="modal__title--text">Цвет</h4>
+						</div>
+						<div class="modal__flex">
+							<div class="modal__item btn text-blue">
+								<i class="fa-solid fa-circle"></i>
+							</div>
+							<div class="modal__item btn text-red">
+								<i class="fa-solid fa-circle"></i>
+							</div>
+							<div class="modal__item btn text-yellow">
+								<i class="fa-solid fa-circle"></i>
+							</div>
+							<div class="modal__item btn active text-green">
+								<i class="fa-solid fa-circle"></i>
+							</div>
+							<div class="modal__item btn text-white">
+								<i class="fa-solid fa-circle"></i>
+							</div>
+						</div>
+					</div>
+					<!-- end of color -->
+
+					<!-- btns -->
+					<div class="modal__btns">
+						<div class="btn btn-red">Отмена</div>
+						<div class="btn">Применить</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- modal end -->
+	</body>
+</html>

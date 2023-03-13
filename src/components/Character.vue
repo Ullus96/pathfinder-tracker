@@ -33,7 +33,7 @@
       </stat>
       <!-- end of single stat -->
       <!-- plus -->
-      <div class="stats__item stats__item--add">
+      <div class="stats__item stats__item--add" @click="editStat">
         <i class="fa-solid fa-plus"></i>
       </div>
       <!-- end of plus -->
@@ -46,7 +46,7 @@ import Stat from "./Stat.vue";
 export default {
   components: { Stat },
   props: ["data", "i"],
-  emits: ["removeCharacter", "removeStat"],
+  emits: ["removeCharacter", "removeStat", "addStat"],
   setup(props, context) {
     function removeCharacter() {
       context.emit("removeCharacter", props.i);
@@ -59,9 +59,14 @@ export default {
       context.emit("removeStat", { charIdx: props.i, statIdx });
     }
 
+    function editStat() {
+      context.emit("editStat", props.i);
+    }
+
     return {
       removeCharacter,
       removeStat,
+      editStat,
     };
   },
 };
