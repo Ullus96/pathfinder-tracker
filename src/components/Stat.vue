@@ -8,6 +8,27 @@
       stat.type === 'health' ? 'stats__item--wide' : '',
     ]"
   >
+    <div class="menu" v-if="stat.isMenuShown">
+      <div class="menu__item">
+        <div class="menu__counters">
+          <div class="menu__counter menu__btn">-5</div>
+          <div class="menu__counter menu__btn">-1</div>
+          <div class="menu__counter menu__btn">+1</div>
+          <div class="menu__counter menu__btn">+5</div>
+        </div>
+      </div>
+
+      <div class="menu__item">
+        <div class="menu__counters">
+          <div class="menu__counter menu__btn">Min</div>
+          <div class="menu__counter menu__btn">Max</div>
+        </div>
+      </div>
+
+      <div class="menu__item">
+        <p class="menu__btn">Изменить</p>
+      </div>
+    </div>
     <!-- icon and name -->
     <i class="fa-solid" :class="`fa-${stat.icon}`"></i>
     <p v-if="stat.name" class="stats__item--name">{{ stat.name }}</p>

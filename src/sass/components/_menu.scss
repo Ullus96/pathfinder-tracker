@@ -1,0 +1,50 @@
+.menu {
+	position: absolute;
+	background-color: $color-bg-darkest;
+	color: $color-white;
+	border-radius: 0.4rem;
+	top: 3.2rem;
+	left: 0.3rem;
+	z-index: 100;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	box-shadow: 0 0.4rem 0.8rem rgba($color-black, 0.4);
+
+	&__cover {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		background-color: rgba(mix($color-black, $color-bg-darkest, 90%), 0.1);
+		z-index: 99;
+	}
+
+	&__item {
+		text-align: center;
+		display: block;
+	}
+
+	&__item:not(:last-child) {
+		border-bottom: 1px solid rgba(mix($color-white, $color-black, 60%), 0.1);
+	}
+
+	&__btn {
+		padding: 0.6rem 1.2rem;
+	}
+
+	&__btn:hover {
+		background-color: lighten($color-bg-darkest, 3%);
+	}
+
+	&__counters {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+	}
+
+	&__counter {
+		flex-basis: 100%;
+	}
+}

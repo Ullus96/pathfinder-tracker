@@ -1,10 +1,11 @@
 <template>
   <!-- modal start -->
   <div class="modal" v-if="showModal">
+    <div class="modal__cover" @click="closeModal"></div>
     <div class="modal__card">
       <div class="modal__header">
         <h2>Добавить характеристику</h2>
-        <div class="modal__close">&#10005;</div>
+        <div class="modal__close" @click="closeModal">&#10005;</div>
       </div>
       <!-- modal main content -->
       <div class="modal__content">
@@ -43,7 +44,7 @@
             <p>Знач.:</p>
             <input
               class="modal__input"
-              type="text"
+              type="number"
               placeholder="Цифровое значение"
               v-model="modalData.current"
             />
@@ -55,7 +56,7 @@
             <p>Макс:</p>
             <input
               class="modal__input"
-              type="text"
+              type="number"
               placeholder="Максимальное значение"
               v-model="modalData.max"
             />
@@ -106,13 +107,20 @@
 
         <!-- btns -->
         <div class="modal__btns">
-          <div class="btn btn-red">Отмена</div>
+          <div class="btn btn-red" @click="closeModal">Отмена</div>
           <div class="btn" @click="addStat">Применить</div>
         </div>
       </div>
     </div>
   </div>
   <!-- modal end -->
+  <!-- menu cover -->
+  <div
+    class="menu__cover"
+    v-if="isMenuCoverShown"
+    @click="closeMenuByClickOnCover"
+  ></div>
+  <!------>
   <header class="header">
     <ul class="header__content">
       <li
@@ -176,6 +184,7 @@ export default {
             type: "health",
             current: 84,
             max: 100,
+            isMenuShown: true,
           },
           {
             name: "DEF",
@@ -184,6 +193,7 @@ export default {
             type: "value",
             current: 1,
             max: "",
+            isMenuShown: false,
           },
           {
             name: "",
@@ -192,6 +202,7 @@ export default {
             type: "value",
             current: 1,
             max: 3,
+            isMenuShown: false,
           },
           {
             name: "Reaction",
@@ -200,6 +211,7 @@ export default {
             type: "toggle",
             current: 0,
             max: "",
+            isMenuShown: false,
           },
         ],
       },
@@ -215,6 +227,7 @@ export default {
             type: "health",
             current: 103,
             max: 250,
+            isMenuShown: false,
           },
           {
             name: "DEF",
@@ -223,6 +236,7 @@ export default {
             type: "value",
             current: 8,
             max: "",
+            isMenuShown: false,
           },
           {
             name: "Sp.Points",
@@ -231,6 +245,7 @@ export default {
             type: "value",
             current: 2,
             max: 7,
+            isMenuShown: false,
           },
           {
             name: "Enraged",
@@ -239,6 +254,7 @@ export default {
             type: "toggle",
             current: 1,
             max: "",
+            isMenuShown: false,
           },
         ],
       },
@@ -254,6 +270,7 @@ export default {
             type: "value",
             current: "",
             max: "",
+            isMenuShown: false,
           },
         ],
       },
@@ -261,6 +278,7 @@ export default {
 
     let showModal = ref(false);
 
+    // data to fullfill the stat adding modal window
     const modalData = reactive({
       activeType: 0,
       types: ["Стат", "Мин/макс", "Вкл/выкл", "ХП-бар"],
@@ -295,6 +313,7 @@ export default {
       max: "",
     });
 
+    // create a new character by clicking on the top right icons
     function addCharacter(name, color, icon) {
       const generatedCharacter = {
         name: name,
@@ -302,6 +321,7 @@ export default {
         icon: icon,
         stats: [],
       };
+      // add generated character to array of characters
       characters.push(generatedCharacter);
     }
 
@@ -317,6 +337,8 @@ export default {
       currentEditable.charIdx = charIdx;
     }
 
+    // add a new stat when all data checked and "proceed" button
+    // on the modal window is clicked
     function addStat() {
       const generatedStat = {
         name: modalData.name,
@@ -330,11 +352,21 @@ export default {
       characters[currentEditable.charIdx].stats.push(generatedStat);
 
       // clean all variables to make a new opened modal an empty one
+      cleanModalValues();
+    }
+
+    // clean all variables to make a new opened modal an empty one
+    function cleanModalValues() {
       showModal.value = false;
       modalData.name = "";
       modalData.current = "";
       modalData.max = "";
       wasSetToToggle = false;
+    }
+
+    // close modal window
+    function closeModal() {
+      cleanModalValues();
     }
 
     // we get character index from Character.vue then we remove
@@ -368,16 +400,31 @@ export default {
       }
     }
 
+    // QUICK-MENU
+
+    let isMenuCoverShown = ref(true);
+
+    function closeMenuByClickOnCover() {
+      characters[currentEditable.charIdx].stats[
+        currentEditable.statIdx
+      ].isMenuShown = false;
+
+      isMenuCoverShown.value = false;
+    }
+
     return {
       characters,
       showModal,
       modalData,
+      isMenuCoverShown,
       addCharacter,
       addStat,
       editStat,
+      closeModal,
       removeCharacter,
       removeStat,
       chooseType,
+      closeMenuByClickOnCover,
     };
   },
 };

@@ -3,10 +3,11 @@
 	margin: 0.6rem auto 1.2rem;
 	background-color: $color-bg;
 	border-radius: 0.6rem;
-	overflow: hidden;
 
 	&__header {
 		display: flex;
+		overflow: hidden;
+		border-top-right-radius: 0.6rem;
 	}
 
 	&__sort-btn {
