@@ -1,14 +1,21 @@
 <template>
   <!-- check if the stat block should be wide (if type is health) -->
   <div
-    @click="removeStat"
     class="stats__item"
     :class="[
       `bg-${stat.color}`,
       stat.type === 'health' ? 'stats__item--wide' : '',
     ]"
+    @click="
+      openMenu();
+      getMousePosition($event);
+    "
   >
-    <div class="menu" v-if="stat.isMenuShown">
+    <div
+      class="menu"
+      v-if="stat.isMenuShown"
+      :style="[isClickedOnRightSide ? 'right: 0.3rem' : 'left: 0.3rem']"
+    >
       <div class="menu__item">
         <div class="menu__counters">
           <div class="menu__counter menu__btn">-5</div>
@@ -27,6 +34,11 @@
 
       <div class="menu__item">
         <p class="menu__btn">Изменить</p>
+      </div>
+
+      <div class="menu__item">
+        <div class="menu__safe-space"></div>
+        <p class="menu__btn" @click="removeStat">Удалить 💀</p>
       </div>
     </div>
     <!-- icon and name -->
@@ -76,10 +88,10 @@
 </template>
 
 <script>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 export default {
   props: ["stat", "idx"],
-  emits: ["removeStat"],
+  emits: ["removeStat", "openMenu"],
   setup(props, context) {
     const healthPercentage = computed(() => {
       return `${Math.floor((props.stat.current / props.stat.max) * 100)}%`;
@@ -90,9 +102,29 @@ export default {
       context.emit("removeStat", props.idx);
     }
 
+    // emit current idx to set isMenuShown of this stat to true
+    function openMenu() {
+      context.emit("openMenu", props.idx);
+    }
+
+    // create a boolean that defines a position of menu (left or right)
+    let isClickedOnRightSide = ref(false);
+
+    function getMousePosition(e) {
+      // check if mouse clicked on the right side of a page
+      if (e.pageX > window.innerWidth / 2) {
+        isClickedOnRightSide.value = true;
+      } else {
+        isClickedOnRightSide.value = false;
+      }
+    }
+
     return {
       healthPercentage,
+      isClickedOnRightSide,
       removeStat,
+      openMenu,
+      getMousePosition,
     };
   },
 };

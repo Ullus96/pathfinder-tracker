@@ -161,6 +161,7 @@
       @removeCharacter="removeCharacter"
       @removeStat="removeStat"
       @editStat="editStat"
+      @openMenu="openMenu"
     ></character>
   </section>
 </template>
@@ -184,7 +185,7 @@ export default {
             type: "health",
             current: 84,
             max: 100,
-            isMenuShown: true,
+            isMenuShown: false,
           },
           {
             name: "DEF",
@@ -331,6 +332,14 @@ export default {
       statIdx: 0,
     });
 
+    // set pointers on currently active stat
+    function setPointers(payload) {
+      if (payload.charIdx || payload.charIdx === 0)
+        currentEditable.charIdx = payload.charIdx;
+      if (payload.statIdx || payload.statIdx === 0)
+        currentEditable.statIdx = payload.statIdx;
+    }
+
     // open modal window on clicked 'plus' or 'edit' btns
     function editStat(charIdx) {
       showModal.value = true;
@@ -380,6 +389,7 @@ export default {
     // then we remove certain stat from render
     function removeStat(payload) {
       characters[payload.charIdx].stats.splice(payload.statIdx, 1);
+      closeMenu();
     }
 
     // create an argument to tell us if type was switched to toggle
@@ -402,14 +412,30 @@ export default {
 
     // QUICK-MENU
 
-    let isMenuCoverShown = ref(true);
+    let isMenuCoverShown = ref(false);
+
+    function closeMenu() {
+      isMenuCoverShown.value = false;
+    }
 
     function closeMenuByClickOnCover() {
+      console.log(
+        `Меню закрыто на: ${currentEditable.charIdx},${currentEditable.statIdx}`
+      );
       characters[currentEditable.charIdx].stats[
         currentEditable.statIdx
       ].isMenuShown = false;
 
       isMenuCoverShown.value = false;
+    }
+
+    function openMenu(payload) {
+      setPointers(payload);
+      console.log(`Меню открыто на: ${payload.charIdx},${payload.statIdx}`);
+
+      characters[payload.charIdx].stats[payload.statIdx].isMenuShown = true;
+
+      isMenuCoverShown.value = true;
     }
 
     return {
@@ -424,7 +450,9 @@ export default {
       removeCharacter,
       removeStat,
       chooseType,
+      closeMenu,
       closeMenuByClickOnCover,
+      openMenu,
     };
   },
 };

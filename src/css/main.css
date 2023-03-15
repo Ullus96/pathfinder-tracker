@@ -419,13 +419,12 @@ h6 {
   background-color: #23262e;
   color: #fff;
   border-radius: 0.4rem;
-  top: 3.2rem;
-  left: 0.3rem;
+  top: 3.3rem;
   z-index: 100;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 0.4rem 0.8rem rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0.6rem 1rem rgba(0, 0, 0, 0.6);
 }
 .menu__cover {
   position: absolute;
@@ -433,12 +432,25 @@ h6 {
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgba(4, 4, 5, 0.1);
+  background-color: rgba(4, 4, 5, 0.2);
   z-index: 99;
 }
 .menu__item {
   text-align: center;
   display: block;
+}
+.menu__safe-space {
+  height: 2rem;
+  background-color: transparent;
+  opacity: 0.1;
+  background: repeating-linear-gradient(-45deg, #999999, #999999 5px, transparent 5px, transparent 10px);
+}
+.menu__item:last-child > .menu__btn {
+  background-color: #d85252;
+  transition: background-color 0.1s ease-in-out;
+}
+.menu__item:last-child > .menu__btn:hover {
+  background-color: #c64e4e;
 }
 .menu__item:not(:last-child) {
   border-bottom: 1px solid rgba(153, 153, 153, 0.1);

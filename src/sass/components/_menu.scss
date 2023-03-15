@@ -3,13 +3,12 @@
 	background-color: $color-bg-darkest;
 	color: $color-white;
 	border-radius: 0.4rem;
-	top: 3.2rem;
-	left: 0.3rem;
+	top: 3.3rem;
 	z-index: 100;
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-	box-shadow: 0 0.4rem 0.8rem rgba($color-black, 0.4);
+	box-shadow: 0 0.6rem 1rem rgba($color-black, 0.6);
 
 	&__cover {
 		position: absolute;
@@ -17,13 +16,35 @@
 		bottom: 0;
 		left: 0;
 		right: 0;
-		background-color: rgba(mix($color-black, $color-bg-darkest, 90%), 0.1);
+		background-color: rgba(mix($color-black, $color-bg-darkest, 90%), 0.2);
 		z-index: 99;
 	}
 
 	&__item {
 		text-align: center;
 		display: block;
+	}
+
+	&__safe-space {
+		height: 2rem;
+		background-color: transparent;
+		opacity: 0.1;
+		background: repeating-linear-gradient(
+			-45deg,
+			mix($color-white, $color-black, 60%),
+			mix($color-white, $color-black, 60%) 5px,
+			transparent 5px,
+			transparent 10px
+		);
+	}
+
+	&__item:last-child > &__btn {
+		background-color: $color-red;
+		transition: background-color 0.1s ease-in-out;
+	}
+
+	&__item:last-child > &__btn:hover {
+		background-color: mix($color-red, $color-bg-darkest, 90%);
 	}
 
 	&__item:not(:last-child) {

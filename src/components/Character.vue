@@ -29,6 +29,7 @@
         :idx="idx"
         :stat="stat"
         @removeStat="removeStat"
+        @openMenu="openMenu"
       >
       </stat>
       <!-- end of single stat -->
@@ -46,7 +47,7 @@ import Stat from "./Stat.vue";
 export default {
   components: { Stat },
   props: ["data", "i"],
-  emits: ["removeCharacter", "removeStat", "addStat"],
+  emits: ["removeCharacter", "removeStat", "addStat", "openMenu"],
   setup(props, context) {
     function removeCharacter() {
       context.emit("removeCharacter", props.i);
@@ -59,14 +60,22 @@ export default {
       context.emit("removeStat", { charIdx: props.i, statIdx });
     }
 
+    // by clicking on plus, send index of current character to App
     function editStat() {
       context.emit("editStat", props.i);
+    }
+
+    // get index of stat and send it to App.vue
+    // and add a current character index
+    function openMenu(statIdx) {
+      context.emit("openMenu", { charIdx: props.i, statIdx });
     }
 
     return {
       removeCharacter,
       removeStat,
       editStat,
+      openMenu,
     };
   },
 };
