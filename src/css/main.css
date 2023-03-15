@@ -313,6 +313,7 @@ h6 {
   margin: 0.6rem auto 1.2rem;
   background-color: #292e3e;
   border-radius: 0.6rem;
+  position: relative;
 }
 .person__header {
   display: flex;
@@ -419,7 +420,6 @@ h6 {
   background-color: #23262e;
   color: #fff;
   border-radius: 0.4rem;
-  top: 3.3rem;
   z-index: 100;
   overflow: hidden;
   display: flex;
@@ -444,6 +444,7 @@ h6 {
   background-color: transparent;
   opacity: 0.1;
   background: repeating-linear-gradient(-45deg, #999999, #999999 5px, transparent 5px, transparent 10px);
+  cursor: default;
 }
 .menu__item:last-child > .menu__btn {
   background-color: #d85252;
@@ -457,6 +458,7 @@ h6 {
 }
 .menu__btn {
   padding: 0.6rem 1.2rem;
+  cursor: pointer;
 }
 .menu__btn:hover {
   background-color: #2a2d37;

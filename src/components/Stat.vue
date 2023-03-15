@@ -7,16 +7,23 @@
       stat.type === 'health' ? 'stats__item--wide' : '',
     ]"
     @click="
-      openMenu();
+      openStatMenu();
       getMousePosition($event);
     "
   >
+    <!-- check if we should popup menu with some offset to not run out of screen -->
     <div
       class="menu"
       v-if="stat.isMenuShown"
-      :style="[isClickedOnRightSide ? 'right: 0.3rem' : 'left: 0.3rem']"
+      :style="[
+        isClickedOnRightHalf ? 'right: 0.3rem' : 'left: 0.3rem',
+        isClickedOnBottom
+          ? 'bottom: 3.3rem; flex-direction: column-reverse;'
+          : 'top: 3.3rem',
+      ]"
     >
-      <div class="menu__item">
+      <!-- check if stat type isn't toggleable (bc it doesn't make sense) -->
+      <div class="menu__item" v-if="stat.type !== 'toggle'">
         <div class="menu__counters">
           <div class="menu__counter menu__btn">-5</div>
           <div class="menu__counter menu__btn">-1</div>
@@ -24,8 +31,13 @@
           <div class="menu__counter menu__btn">+5</div>
         </div>
       </div>
+      <!-- and here v-else type is toggleable -->
+      <div class="menu__item" v-else>
+        <div class="menu__counter menu__btn">Переключить</div>
+      </div>
 
-      <div class="menu__item">
+      <!-- same here; we don't need min/max value for toggleable -->
+      <div class="menu__item" v-if="stat.max">
         <div class="menu__counters">
           <div class="menu__counter menu__btn">Min</div>
           <div class="menu__counter menu__btn">Max</div>
@@ -36,8 +48,23 @@
         <p class="menu__btn">Изменить</p>
       </div>
 
-      <div class="menu__item">
-        <div class="menu__safe-space"></div>
+      <!-- reverse position of safe space is clicked on bottom of screen -->
+      <div
+        class="menu__item"
+        :style="[
+          isClickedOnBottom
+            ? 'display: flex; flex-direction: column-reverse;'
+            : '',
+        ]"
+      >
+        <div
+          class="menu__safe-space"
+          :style="[
+            isClickedOnBottom
+              ? 'border-bottom: 1px solid rgba(153, 153, 153, 0.1);'
+              : '',
+          ]"
+        ></div>
         <p class="menu__btn" @click="removeStat">Удалить 💀</p>
       </div>
     </div>
@@ -91,7 +118,7 @@
 import { computed, ref } from "vue";
 export default {
   props: ["stat", "idx"],
-  emits: ["removeStat", "openMenu"],
+  emits: ["removeStat", "openStatMenu"],
   setup(props, context) {
     const healthPercentage = computed(() => {
       return `${Math.floor((props.stat.current / props.stat.max) * 100)}%`;
@@ -103,27 +130,36 @@ export default {
     }
 
     // emit current idx to set isMenuShown of this stat to true
-    function openMenu() {
-      context.emit("openMenu", props.idx);
+    function openStatMenu() {
+      context.emit("openStatMenu", props.idx);
     }
 
     // create a boolean that defines a position of menu (left or right)
-    let isClickedOnRightSide = ref(false);
+    let isClickedOnRightHalf = ref(false);
+    let isClickedOnBottom = ref(false);
 
     function getMousePosition(e) {
-      // check if mouse clicked on the right side of a page
+      // check if mouse clicked on the right Half of a page
       if (e.pageX > window.innerWidth / 2) {
-        isClickedOnRightSide.value = true;
+        isClickedOnRightHalf.value = true;
       } else {
-        isClickedOnRightSide.value = false;
+        isClickedOnRightHalf.value = false;
+      }
+
+      // check if mouse clicked on bottom 80% of a page
+      if (e.pageY > window.innerHeight * 0.8) {
+        isClickedOnBottom.value = true;
+      } else {
+        isClickedOnBottom.value = false;
       }
     }
 
     return {
       healthPercentage,
-      isClickedOnRightSide,
+      isClickedOnRightHalf,
+      isClickedOnBottom,
       removeStat,
-      openMenu,
+      openStatMenu,
       getMousePosition,
     };
   },

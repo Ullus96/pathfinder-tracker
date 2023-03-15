@@ -118,7 +118,7 @@
   <div
     class="menu__cover"
     v-if="isMenuCoverShown"
-    @click="closeMenuByClickOnCover"
+    @click="closeStatMenuByClickOnCover"
   ></div>
   <!------>
   <header class="header">
@@ -161,7 +161,8 @@
       @removeCharacter="removeCharacter"
       @removeStat="removeStat"
       @editStat="editStat"
-      @openMenu="openMenu"
+      @openStatMenu="openStatMenu"
+      @openCharMenu="openCharMenu"
     ></character>
   </section>
 </template>
@@ -177,6 +178,7 @@ export default {
         name: "Шпингалет",
         color: "blue",
         icon: "user",
+        isMenuShown: false,
         stats: [
           {
             name: "",
@@ -220,6 +222,7 @@ export default {
         name: "Красный Барон",
         color: "red",
         icon: "ghost",
+        isMenuShown: false,
         stats: [
           {
             name: "",
@@ -263,6 +266,7 @@ export default {
         name: "Заметка",
         color: "yellow",
         icon: "note",
+        isMenuShown: false,
         stats: [
           {
             name: "Здания можно возводить лишь на проклятой земле",
@@ -320,6 +324,7 @@ export default {
         name: name,
         color: color,
         icon: icon,
+        isMenuShown: false,
         stats: [],
       };
       // add generated character to array of characters
@@ -349,13 +354,61 @@ export default {
     // add a new stat when all data checked and "proceed" button
     // on the modal window is clicked
     function addStat() {
+      const verifiedData = {
+        current: "",
+        max: "",
+      };
+
+      // add some verification (if health was sent with current hp but w/o max)
+      if (
+        modalData.typesName[modalData.activeType] === "health" &&
+        !modalData.max &&
+        modalData.current
+      ) {
+        verifiedData.max = modalData.current;
+      }
+      // verify for min/max w/o max was set
+      else if (
+        modalData.activeType === 1 &&
+        !modalData.max &&
+        modalData.current
+      ) {
+        verifiedData.max = modalData.current;
+      }
+      // else just proceed gained data
+      else {
+        verifiedData.max = modalData.max;
+      }
+
+      // same if health was passed with only current hp but w/o max
+      if (
+        modalData.typesName[modalData.activeType] === "health" &&
+        !modalData.current &&
+        modalData.max
+      ) {
+        verifiedData.current = modalData.max;
+      }
+      // here we check if min/max was checked
+      else if (
+        modalData.activeType === 1 &&
+        !modalData.current &&
+        modalData.max
+      ) {
+        verifiedData.current = modalData.max;
+      }
+      // else just proceed gained data
+      else {
+        verifiedData.current = modalData.current;
+      }
+
       const generatedStat = {
         name: modalData.name,
-        current: modalData.current,
-        max: modalData.max,
+        current: verifiedData.current,
+        max: verifiedData.max,
         type: modalData.typesName[modalData.activeType],
         icon: modalData.icons[modalData.activeIcon],
         color: modalData.colors[modalData.activeColor],
+        isMenuShown: false,
       };
 
       characters[currentEditable.charIdx].stats.push(generatedStat);
@@ -382,6 +435,7 @@ export default {
     // certain character from characters array
     function removeCharacter(charToRemove) {
       characters.splice(charToRemove, 1);
+      closeMenu();
     }
 
     // we get characterIndex from Character.vue and statIdx from Stat.vue
@@ -418,24 +472,44 @@ export default {
       isMenuCoverShown.value = false;
     }
 
-    function closeMenuByClickOnCover() {
+    function closeStatMenuByClickOnCover() {
       console.log(
         `Меню закрыто на: ${currentEditable.charIdx},${currentEditable.statIdx}`
       );
-      characters[currentEditable.charIdx].stats[
-        currentEditable.statIdx
-      ].isMenuShown = false;
+
+      // if (currentEditable.statIdx || currentEditable.statIdx === 0) {
+      if (characters[currentEditable.charIdx].stats.length) {
+        characters[currentEditable.charIdx].stats[
+          currentEditable.statIdx
+        ].isMenuShown = false;
+      }
+
+      characters[currentEditable.charIdx].isMenuShown = false;
 
       isMenuCoverShown.value = false;
     }
 
-    function openMenu(payload) {
+    function openStatMenu(payload) {
       setPointers(payload);
       console.log(`Меню открыто на: ${payload.charIdx},${payload.statIdx}`);
 
       characters[payload.charIdx].stats[payload.statIdx].isMenuShown = true;
 
       isMenuCoverShown.value = true;
+    }
+
+    // Character Menu
+    function openCharMenu(charIdx) {
+      const pointersPayload = {
+        charIdx: charIdx,
+        statIdx: "",
+      };
+      setPointers(pointersPayload);
+
+      characters[charIdx].isMenuShown = true;
+
+      isMenuCoverShown.value = true;
+      console.log(characters);
     }
 
     return {
@@ -451,8 +525,9 @@ export default {
       removeStat,
       chooseType,
       closeMenu,
-      closeMenuByClickOnCover,
-      openMenu,
+      closeStatMenuByClickOnCover,
+      openStatMenu,
+      openCharMenu,
     };
   },
 };
