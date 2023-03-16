@@ -5,6 +5,11 @@
 	border-radius: 0.6rem;
 	position: relative;
 
+	&__active {
+		outline: 4px solid $color-green;
+		box-shadow: 0 0 1.5rem $color-green;
+	}
+
 	&__position {
 		cursor: default;
 

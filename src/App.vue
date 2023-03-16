@@ -350,19 +350,19 @@
   </header>
   <footer class="footer">
     <div class="footer__content">
-      <div class="footer__button">Reset</div>
+      <div class="footer__button" @click="resetTurns()">Reset</div>
       <div class="footer__counter">
-        <div class="footer__button footer__arrow">
+        <div class="footer__button footer__arrow" @click="makeTurn(-1)">
           <i class="fa-solid fa-angle-left"></i>
         </div>
         <div class="footer__turn">
-          <p>1</p>
+          <p>{{ fullTurns }}</p>
         </div>
-        <div class="footer__button footer__arrow">
+        <div class="footer__button footer__arrow" @click="makeTurn(1)">
           <i class="fa-solid fa-angle-right"></i>
         </div>
       </div>
-      <div>&nbsp;</div>
+      <div></div>
     </div>
   </footer>
   <section class="content">
@@ -372,6 +372,7 @@
       :i="i"
       :data="data"
       :isMenuPositionBlocked="isMenuPositionBlocked"
+      :turnIdx="turnIdx"
       @removeCharacter="removeCharacter"
       @removeStat="removeStat"
       @plusStat="plusStat"
@@ -976,6 +977,36 @@ export default {
       characters.splice(targetIdx, 0, editableChar);
     }
 
+    // Turn counter
+    let fullTurns = ref(0);
+    let turnIdx = ref(-1);
+
+    function makeTurn(val) {
+      const borderIdx = characters.length - 1;
+      if (turnIdx.value + val > borderIdx) {
+        turnIdx.value = 0;
+        fullTurns.value += 1;
+      } else if (turnIdx.value + val < 0) {
+        turnIdx.value = characters.length - 1;
+        fullTurns.value -= 1;
+      } else {
+        turnIdx.value += val;
+      }
+
+      // to prevent turns counter going below 0
+      if (fullTurns.value < 0) {
+        fullTurns.value = 0;
+        turnIdx.value = -1;
+      }
+
+      console.log(turnIdx.value);
+    }
+
+    function resetTurns() {
+      fullTurns.value = 0;
+      turnIdx.value = -1;
+    }
+
     return {
       characters,
       showModal,
@@ -986,6 +1017,8 @@ export default {
       isStatEditing,
       isNameEditing,
       modalCalc,
+      turnIdx,
+      fullTurns,
       addCharacter,
       addStat,
       plusStat,
@@ -1005,6 +1038,8 @@ export default {
       editName,
       applyName,
       sortCharacter,
+      makeTurn,
+      resetTurns,
     };
   },
 };

@@ -367,6 +367,10 @@ h6 {
   border-radius: 0.6rem;
   position: relative;
 }
+.person__active {
+  outline: 4px solid #5c9f57;
+  box-shadow: 0 0 1.5rem #5c9f57;
+}
 .person__position {
   cursor: default;
 }

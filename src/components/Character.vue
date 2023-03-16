@@ -1,5 +1,5 @@
 <template>
-  <div class="person">
+  <div class="person" :class="[turnIdx === i ? 'person__active' : '']">
     <!-- check if we should popup menu with some offset to not run out of screen -->
     <div
       class="menu"
@@ -128,7 +128,7 @@ import { ref, computed } from "vue";
 import Stat from "./Stat.vue";
 export default {
   components: { Stat },
-  props: ["data", "i", "isMenuPositionBlocked"],
+  props: ["data", "i", "isMenuPositionBlocked", "turnIdx"],
   emits: [
     "removeCharacter",
     "removeStat",
