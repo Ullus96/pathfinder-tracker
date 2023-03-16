@@ -6,11 +6,14 @@
       `bg-${stat.color}`,
       stat.type === 'health' ? 'stats__item--wide' : '',
     ]"
-    @click="
-      openStatMenu();
-      getMousePosition($event);
-    "
   >
+    <div
+      class="stats__cover"
+      @click="
+        openStatMenu();
+        getMousePosition($event);
+      "
+    ></div>
     <!-- check if we should popup menu with some offset to not run out of screen -->
     <div
       class="menu"
@@ -51,7 +54,7 @@
       </div>
 
       <div class="menu__item">
-        <p class="menu__btn">Изменить</p>
+        <p class="menu__btn" @click="editStat()">Изменить</p>
       </div>
 
       <!-- reverse position of safe space is clicked on bottom of screen -->
@@ -109,7 +112,14 @@
       </div>
     </div>
     <!-- add healthbar if stat type is health -->
-    <div v-if="stat.type === 'health'" class="health">
+    <div
+      v-if="stat.type === 'health'"
+      class="health"
+      @click="
+        openStatMenu();
+        getMousePosition($event);
+      "
+    >
       &nbsp;
       <div
         class="health--current-bar"
@@ -134,6 +144,7 @@ export default {
     "changeStat",
     "toggleStat",
     "blockMenuPos",
+    "editStat",
   ],
   setup(props, context) {
     const healthPercentage = computed(() => {
@@ -170,7 +181,6 @@ export default {
           isClickedOnBottom.value = false;
         }
       }
-      context.emit("blockMenuPos");
     }
 
     // emit current stat idx with value (-1 -5 1 5 min max)
@@ -182,6 +192,10 @@ export default {
       context.emit("toggleStat", props.idx);
     }
 
+    function editStat() {
+      context.emit("editStat", props.idx);
+    }
+
     return {
       healthPercentage,
       isClickedOnRightHalf,
@@ -191,6 +205,7 @@ export default {
       getMousePosition,
       changeStat,
       toggleStat,
+      editStat,
     };
   },
 };

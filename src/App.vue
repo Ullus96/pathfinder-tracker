@@ -2,116 +2,288 @@
   <!-- modal start -->
   <div class="modal" v-if="showModal">
     <div class="modal__cover" @click="closeModal"></div>
-    <div class="modal__card">
-      <div class="modal__header">
-        <h2>Добавить характеристику</h2>
-        <div class="modal__close" @click="closeModal">&#10005;</div>
-      </div>
-      <!-- modal main content -->
-      <div class="modal__content">
-        <!-- types start -->
-        <div class="modal__title">
-          <h4 class="modal__title--text">Тип</h4>
+    <!-- v-if add stat -->
+    <template v-if="isStatAdding">
+      <div class="modal__card">
+        <div class="modal__header">
+          <h2>Добавить характеристику</h2>
+          <div class="modal__close" @click="closeModal">&#10005;</div>
         </div>
-        <div class="modal__types">
-          <div
-            v-for="(type, idx) in modalData.types"
-            :key="idx"
-            class="modal__type btn"
-            :class="idx === modalData.activeType ? 'active' : ''"
-            @click="
-              modalData.activeType = idx;
-              chooseType(idx);
-            "
-          >
-            {{ type }}
-          </div>
-        </div>
-        <!-- end of types -->
-
-        <!-- input fields -->
-        <div class="modal__values">
-          <div class="modal__value">
-            <p>Имя:</p>
-            <input
-              class="modal__input"
-              type="text"
-              placeholder="Название (можно пустое)"
-              v-model="modalData.name"
-            />
-          </div>
-          <div class="modal__value" v-if="modalData.activeType !== 2">
-            <p>Знач.:</p>
-            <input
-              class="modal__input"
-              type="number"
-              placeholder="Цифровое значение"
-              v-model="modalData.current"
-            />
-          </div>
-          <div
-            class="modal__value"
-            v-if="modalData.activeType == 1 || modalData.activeType == 3"
-          >
-            <p>Макс:</p>
-            <input
-              class="modal__input"
-              type="number"
-              placeholder="Максимальное значение"
-              v-model="modalData.max"
-            />
-          </div>
-        </div>
-        <!-- end of input -->
-
-        <!-- icons -->
-        <div class="modal__block">
+        <!-- modal main content -->
+        <div class="modal__content">
+          <!-- types start -->
           <div class="modal__title">
-            <h4 class="modal__title--text">Иконка</h4>
+            <h4 class="modal__title--text">Тип</h4>
           </div>
-          <div class="modal__flex">
+          <div class="modal__types">
             <div
-              class="modal__item btn"
-              v-for="(icon, idx) in modalData.icons"
+              v-for="(type, idx) in modalData.types"
               :key="idx"
-              :class="idx === modalData.activeIcon ? 'active' : ''"
-              @click="modalData.activeIcon = idx"
+              class="modal__type btn"
+              :class="idx === modalData.activeType ? 'active' : ''"
+              @click="
+                modalData.activeType = idx;
+                chooseType(idx);
+              "
             >
-              <i class="fa-solid" :class="`fa-${icon}`"></i>
+              {{ type }}
             </div>
           </div>
-        </div>
-        <!-- end of icons -->
+          <!-- end of types -->
 
-        <!-- color picker -->
-        <div class="modal__block">
-          <div class="modal__title">
-            <h4 class="modal__title--text">Цвет</h4>
-          </div>
-          <div class="modal__flex">
+          <!-- input fields -->
+          <div class="modal__values">
+            <div class="modal__value">
+              <p>Имя:</p>
+              <input
+                class="modal__input"
+                type="text"
+                placeholder="Название (можно пустое)"
+                v-model="modalData.name"
+              />
+            </div>
+            <div class="modal__value" v-if="modalData.activeType !== 2">
+              <p>Знач.:</p>
+              <input
+                class="modal__input"
+                type="number"
+                placeholder="Цифровое значение"
+                v-model="modalData.current"
+              />
+            </div>
             <div
-              class="modal__item btn"
-              v-for="(color, idx) in modalData.colors"
-              :key="idx"
-              :class="[
-                `text-${color}`,
-                idx === modalData.activeColor ? 'active' : '',
-              ]"
-              @click="modalData.activeColor = idx"
+              class="modal__value"
+              v-if="modalData.activeType == 1 || modalData.activeType == 3"
             >
-              <i class="fa-solid fa-circle"></i>
+              <p>Макс:</p>
+              <input
+                class="modal__input"
+                type="number"
+                placeholder="Максимальное значение"
+                v-model="modalData.max"
+              />
             </div>
           </div>
-        </div>
-        <!-- end of color -->
+          <!-- end of input -->
 
-        <!-- btns -->
-        <div class="modal__btns">
-          <div class="btn btn-red" @click="closeModal">Отмена</div>
-          <div class="btn" @click="addStat">Применить</div>
+          <!-- icons -->
+          <div class="modal__block">
+            <div class="modal__title">
+              <h4 class="modal__title--text">Иконка</h4>
+            </div>
+            <div class="modal__flex">
+              <div
+                class="modal__item btn"
+                v-for="(icon, idx) in modalData.icons"
+                :key="idx"
+                :class="idx === modalData.activeIcon ? 'active' : ''"
+                @click="modalData.activeIcon = idx"
+              >
+                <i class="fa-solid" :class="`fa-${icon}`"></i>
+              </div>
+            </div>
+          </div>
+          <!-- end of icons -->
+
+          <!-- color picker -->
+          <div class="modal__block">
+            <div class="modal__title">
+              <h4 class="modal__title--text">Цвет</h4>
+            </div>
+            <div class="modal__flex">
+              <div
+                class="modal__item btn"
+                v-for="(color, idx) in modalData.colors"
+                :key="idx"
+                :class="[
+                  `text-${color}`,
+                  idx === modalData.activeColor ? 'active' : '',
+                ]"
+                @click="modalData.activeColor = idx"
+              >
+                <i class="fa-solid fa-circle"></i>
+              </div>
+            </div>
+          </div>
+          <!-- end of color -->
+
+          <!-- btns -->
+          <div class="modal__btns">
+            <div class="btn btn-red" @click="closeModal">Отмена</div>
+            <div class="btn" @click="addStat">Применить</div>
+          </div>
         </div>
       </div>
-    </div>
+    </template>
+    <!-- end of add stat -->
+    <!-- v-if edit stat -->
+    <template v-if="isStatEditing">
+      <div class="modal__card">
+        <div class="modal__header">
+          <h2>Изменить характеристику</h2>
+          <div class="modal__close" @click="closeModal">&#10005;</div>
+        </div>
+        <!-- modal main content -->
+        <div class="modal__content">
+          <!-- types start -->
+          <div class="modal__title">
+            <h4 class="modal__title--text">Тип</h4>
+          </div>
+          <div class="modal__types">
+            <div
+              v-for="(type, idx) in modalData.types"
+              :key="idx"
+              class="modal__type btn"
+              :class="idx === modalData.activeType ? 'active' : ''"
+              @click="
+                modalData.activeType = idx;
+                chooseType(idx);
+              "
+            >
+              {{ type }}
+            </div>
+          </div>
+          <!-- end of types -->
+
+          <!-- input fields -->
+          <div class="modal__values">
+            <div class="modal__value">
+              <p>Имя:</p>
+              <input
+                class="modal__input"
+                type="text"
+                placeholder="Название (можно пустое)"
+                v-model="modalData.name"
+              />
+            </div>
+            <div class="modal__value" v-if="modalData.activeType !== 2">
+              <p>Знач.:</p>
+              <input
+                class="modal__input"
+                type="number"
+                placeholder="Цифровое значение"
+                v-model="modalData.current"
+              />
+            </div>
+            <div
+              class="modal__value"
+              v-if="modalData.activeType == 1 || modalData.activeType == 3"
+            >
+              <p>Макс:</p>
+              <input
+                class="modal__input"
+                type="number"
+                placeholder="Максимальное значение"
+                v-model="modalData.max"
+              />
+            </div>
+          </div>
+          <!-- end of input -->
+
+          <!-- icons -->
+          <div class="modal__block">
+            <div class="modal__title">
+              <h4 class="modal__title--text">Иконка</h4>
+            </div>
+            <div class="modal__flex">
+              <div
+                class="modal__item btn"
+                v-for="(icon, idx) in modalData.icons"
+                :key="idx"
+                :class="idx === modalData.activeIcon ? 'active' : ''"
+                @click="modalData.activeIcon = idx"
+              >
+                <i class="fa-solid" :class="`fa-${icon}`"></i>
+              </div>
+            </div>
+          </div>
+          <!-- end of icons -->
+
+          <!-- color picker -->
+          <div class="modal__block">
+            <div class="modal__title">
+              <h4 class="modal__title--text">Цвет</h4>
+            </div>
+            <div class="modal__flex">
+              <div
+                class="modal__item btn"
+                v-for="(color, idx) in modalData.colors"
+                :key="idx"
+                :class="[
+                  `text-${color}`,
+                  idx === modalData.activeColor ? 'active' : '',
+                ]"
+                @click="modalData.activeColor = idx"
+              >
+                <i class="fa-solid fa-circle"></i>
+              </div>
+            </div>
+          </div>
+          <!-- end of color -->
+
+          <!-- btns -->
+          <div class="modal__btns">
+            <div class="btn btn-red" @click="closeModal">Отмена</div>
+            <div class="btn" @click="applyEdit">Изменить</div>
+          </div>
+        </div>
+      </div>
+    </template>
+    <!-- end of edit stat -->
+    <!-- v-if edit name -->
+    <template v-if="isNameEditing">
+      <div class="modal__card">
+        <div class="modal__header">
+          <h2>Изменить персонажа</h2>
+          <div class="modal__close" @click="closeModal">&#10005;</div>
+        </div>
+        <!-- modal main content -->
+        <div class="modal__content">
+          <!-- input fields -->
+          <div class="modal__values">
+            <div class="modal__value">
+              <p>Имя:</p>
+              <input
+                class="modal__input"
+                type="text"
+                placeholder="Название (можно пустое)"
+                v-model="modalData.name"
+              />
+            </div>
+          </div>
+          <!-- end of input -->
+
+          <!-- color picker -->
+          <div class="modal__block">
+            <div class="modal__title">
+              <h4 class="modal__title--text">Цвет</h4>
+            </div>
+            <div class="modal__flex">
+              <div
+                class="modal__item btn"
+                v-for="(color, idx) in modalData.colors"
+                :key="idx"
+                :class="[
+                  `text-${color}`,
+                  idx === modalData.activeColor ? 'active' : '',
+                ]"
+                @click="modalData.activeColor = idx"
+              >
+                <i class="fa-solid fa-circle"></i>
+              </div>
+            </div>
+          </div>
+          <!-- end of color -->
+
+          <!-- btns -->
+          <div class="modal__btns">
+            <div class="btn btn-red" @click="closeModal">Отмена</div>
+            <div class="btn" @click="applyName">Изменить</div>
+          </div>
+        </div>
+      </div>
+    </template>
+    <!-- end of edit name -->
   </div>
   <!-- modal end -->
   <!-- menu cover -->
@@ -167,6 +339,8 @@
       @changeStat="changeStat"
       @toggleStat="toggleStat"
       @blockMenuPos="blockMenuPos"
+      @editStat="editStat"
+      @editName="editName"
     ></character>
   </section>
 </template>
@@ -206,7 +380,7 @@ export default {
             name: "",
             color: "blue",
             icon: "dragon",
-            type: "value",
+            type: "minmax",
             current: 1,
             max: 3,
             isMenuShown: false,
@@ -250,7 +424,7 @@ export default {
             name: "Sp.Points",
             color: "red",
             icon: "hat-wizard",
-            type: "value",
+            type: "minmax",
             current: 2,
             max: 7,
             isMenuShown: false,
@@ -286,12 +460,15 @@ export default {
     ]);
 
     let showModal = ref(false);
+    let isStatAdding = ref(false);
+    let isStatEditing = ref(false);
+    let isNameEditing = ref(false);
 
     // data to fullfill the stat adding modal window
     const modalData = reactive({
       activeType: 0,
       types: ["Стат", "Мин/макс", "Вкл/выкл", "ХП-бар"],
-      typesName: ["value", "value", "toggle", "health"],
+      typesName: ["value", "minmax", "toggle", "health"],
       activeIcon: 0,
       icons: [
         "circle",
@@ -343,14 +520,17 @@ export default {
 
     // set pointers on currently active stat
     function setPointers(payload) {
-      if (payload.charIdx || payload.charIdx === 0)
+      if (payload.charIdx || payload.charIdx === 0) {
         currentEditable.charIdx = payload.charIdx;
-      if (payload.statIdx || payload.statIdx === 0)
+      }
+      if (payload.statIdx || payload.statIdx === 0) {
         currentEditable.statIdx = payload.statIdx;
+      }
     }
 
     // open modal window on clicked 'plus' btn
     function plusStat(charIdx) {
+      isStatAdding.value = true;
       showModal.value = true;
       currentEditable.charIdx = charIdx;
     }
@@ -405,6 +585,10 @@ export default {
         verifiedData.current = modalData.current;
       }
 
+      if (modalData.activeType === 0) {
+        verifiedData.max = "";
+      }
+
       const generatedStat = {
         name: modalData.name,
         current: verifiedData.current,
@@ -418,12 +602,13 @@ export default {
       characters[currentEditable.charIdx].stats.push(generatedStat);
 
       // clean all variables to make a new opened modal an empty one
-      cleanModalValues();
+      closeModal();
+      isStatAdding.value = false;
     }
 
     // clean all variables to make a new opened modal an empty one
     function cleanModalValues() {
-      showModal.value = false;
+      // showModal.value = false;
       modalData.name = "";
       modalData.current = "";
       modalData.max = "";
@@ -433,6 +618,7 @@ export default {
     // close modal window
     function closeModal() {
       cleanModalValues();
+      showModal.value = false;
     }
 
     // we get character index from Character.vue then we remove
@@ -534,6 +720,7 @@ export default {
       // else if we got a 'min' or 'max', set current val as 0 or max.
       if (typeof payload.val === "number") {
         editableStat.current += payload.val;
+
         // block of code that doesn't allow to go past min or max values
         // removed bc GM said that players would be need minus vals on some cases
         // ---
@@ -556,6 +743,136 @@ export default {
       editableStat.current === 0
         ? (editableStat.current = 1)
         : (editableStat.current = 0);
+
+      editableStat.isMenuShown = false;
+      closeStatMenuByClickOnCover();
+    }
+
+    function editStat(payload) {
+      setPointers(payload);
+      const editableStat = characters[payload.charIdx].stats[payload.statIdx];
+
+      closeStatMenuByClickOnCover();
+      cleanModalValues();
+      showModal.value = true;
+      isStatEditing.value = true;
+
+      // set values depends on stat
+      modalData.name = editableStat.name;
+      modalData.current = editableStat.current;
+      modalData.max = editableStat.max;
+
+      // find index of stat's type and set it to activeType index
+      modalData.activeType = modalData.typesName.findIndex(
+        (el) => el === editableStat.type
+      );
+
+      // find index of stat's icon and set it to activeIcon index
+      modalData.activeIcon = modalData.icons.findIndex(
+        (el) => el === editableStat.icon
+      );
+
+      // find index of stat's color and set it to activeColor index
+      modalData.activeColor = modalData.colors.findIndex(
+        (el) => el === editableStat.color
+      );
+    }
+
+    function applyEdit() {
+      const editableStat =
+        characters[currentEditable.charIdx].stats[currentEditable.statIdx];
+
+      const verifiedData = {
+        current: "",
+        max: "",
+      };
+
+      // add some verification (if health was sent with current hp but w/o max)
+      if (
+        modalData.typesName[modalData.activeType] === "health" &&
+        !modalData.max &&
+        modalData.current
+      ) {
+        verifiedData.max = modalData.current;
+      }
+      // verify for min/max w/o max was set
+      else if (
+        modalData.activeType === 1 &&
+        !modalData.max &&
+        modalData.current
+      ) {
+        verifiedData.max = modalData.current;
+      }
+      // else just proceed gained data
+      else {
+        verifiedData.max = modalData.max;
+      }
+
+      // same if health was passed with only current hp but w/o max
+      if (
+        modalData.typesName[modalData.activeType] === "health" &&
+        !modalData.current &&
+        modalData.max
+      ) {
+        verifiedData.current = modalData.max;
+      }
+      // here we check if min/max was checked
+      else if (
+        modalData.activeType === 1 &&
+        !modalData.current &&
+        modalData.max
+      ) {
+        verifiedData.current = modalData.max;
+      }
+      // else just proceed gained data
+      else {
+        verifiedData.current = modalData.current;
+      }
+
+      if (modalData.activeType === 0) {
+        verifiedData.max = "";
+      }
+
+      editableStat.name = modalData.name;
+      editableStat.current = verifiedData.current;
+      editableStat.max = verifiedData.max;
+      editableStat.name = modalData.name;
+      editableStat.type = modalData.typesName[modalData.activeType];
+      editableStat.icon = modalData.icons[modalData.activeIcon];
+      editableStat.color = modalData.colors[modalData.activeColor];
+      editableStat.isMenuShown = false;
+
+      closeModal();
+      isStatEditing.value = false;
+    }
+
+    function editName(charIdx) {
+      setPointers({ charIdx: charIdx });
+      const editableName = characters[charIdx];
+
+      closeStatMenuByClickOnCover();
+      cleanModalValues();
+      showModal.value = true;
+      isNameEditing.value = true;
+
+      // set values depends on stat
+      modalData.name = editableName.name;
+
+      // find index of stat's color and set it to activeColor index
+      modalData.activeColor = modalData.colors.findIndex(
+        (el) => el === editableName.color
+      );
+    }
+
+    function applyName() {
+      const editableName = characters[currentEditable.charIdx];
+
+      editableName.name = modalData.name;
+      editableName.color = modalData.colors[modalData.activeColor];
+      editableName.isMenuShown = false;
+
+      closeModal();
+      isNameEditing.value = false;
     }
 
     return {
@@ -564,6 +881,9 @@ export default {
       modalData,
       isMenuCoverShown,
       isMenuPositionBlocked,
+      isStatAdding,
+      isStatEditing,
+      isNameEditing,
       addCharacter,
       addStat,
       plusStat,
@@ -578,6 +898,10 @@ export default {
       changeStat,
       toggleStat,
       blockMenuPos,
+      editStat,
+      applyEdit,
+      editName,
+      applyName,
     };
   },
 };

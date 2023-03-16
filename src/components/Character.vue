@@ -37,7 +37,7 @@
       <!-- edit menu -->
       <template v-if="isEditMenuShown">
         <div class="menu__item">
-          <p class="menu__btn">Изменить</p>
+          <p class="menu__btn" @click="editName">Изменить</p>
         </div>
         <!-- reverse position of safe space is clicked on bottom of screen -->
         <div
@@ -81,6 +81,7 @@
                 ? `fa-regular fa-${data.icon}-sticky`
                 : `fa-solid fa-${data.icon}`,
             ]"
+            v-if="data.name"
           ></i>
           {{ data.name }}
         </div>
@@ -109,6 +110,7 @@
         @changeStat="changeStat"
         @toggleStat="toggleStat"
         @blockMenuPos="blockMenuPos"
+        @editStat="editStat"
       >
       </stat>
       <!-- end of single stat -->
@@ -136,6 +138,8 @@ export default {
     "changeStat",
     "toggleStat",
     "blockMenuPos",
+    "editStat",
+    "editName",
   ],
   setup(props, context) {
     function removeCharacter() {
@@ -202,7 +206,6 @@ export default {
           isClickedOnBottom.value = false;
         }
       }
-      blockMenuPos();
     }
 
     const positionInArray = computed(() => {
@@ -225,6 +228,14 @@ export default {
       context.emit("blockMenuPos");
     }
 
+    function editStat(statIdx) {
+      context.emit("editStat", { charIdx: props.i, statIdx });
+    }
+
+    function editName() {
+      context.emit("editName", props.i);
+    }
+
     return {
       isClickedOnRightHalf,
       isClickedOnBottom,
@@ -240,6 +251,8 @@ export default {
       changeStat,
       toggleStat,
       blockMenuPos,
+      editStat,
+      editName,
     };
   },
 };
