@@ -167,4 +167,9 @@
 			background-color: mix($color-red, $color-bg-darkest, 90%);
 		}
 	}
+
+	&__small-placeholder::placeholder {
+		font-size: 0.6em;
+		vertical-align: middle;
+	}
 }

@@ -106,7 +106,7 @@
           <!-- and we change its' status depends of the value -->
           <i
             class="fa-solid"
-            :class="[stat.current == 1 ? 'fa-toggle-on' : 'fa-toggle-off']"
+            :class="[stat.current > 0 ? 'fa-toggle-on' : 'fa-toggle-off']"
           ></i>
         </div>
       </div>

@@ -17,16 +17,16 @@
       <template v-if="isRepositionShown">
         <div class="menu__item">
           <div class="menu__counters">
-            <div class="menu__counter menu__btn">
+            <div class="menu__counter menu__btn" @click="sortCharacter('top')">
               <i class="fa-solid fa-angles-up"></i>
             </div>
-            <div class="menu__counter menu__btn">
+            <div class="menu__counter menu__btn" @click="sortCharacter(-1)">
               <i class="fa-solid fa-angle-up"></i>
             </div>
-            <div class="menu__counter menu__btn">
+            <div class="menu__counter menu__btn" @click="sortCharacter(1)">
               <i class="fa-solid fa-angle-down"></i>
             </div>
-            <div class="menu__counter menu__btn">
+            <div class="menu__counter menu__btn" @click="sortCharacter('bot')">
               <i class="fa-solid fa-angles-down"></i>
             </div>
           </div>
@@ -71,7 +71,7 @@
         "
       >
         <i class="fa-solid fa-sort"></i>
-        <p class="person__position">#{{ positionInArray }}</p>
+        <p class="person__position">{{ positionInArray }}</p>
       </div>
       <div class="person__title" :class="`bg-` + data.color">
         <div class="person__name">
@@ -140,6 +140,7 @@ export default {
     "blockMenuPos",
     "editStat",
     "editName",
+    "sortCharacter",
   ],
   setup(props, context) {
     function removeCharacter() {
@@ -212,6 +213,7 @@ export default {
       return props.i + 1;
     });
 
+    // quick menu payload with charIdx statIdx and value (-5 -1 +1 +5 min max)
     function changeStat(payload) {
       context.emit("changeStat", {
         charIdx: props.i,
@@ -220,20 +222,29 @@ export default {
       });
     }
 
+    // emit charIdx and statIdx to change toggle value
     function toggleStat(statIdx) {
       context.emit("toggleStat", { charIdx: props.i, statIdx });
     }
 
+    // block menu from repositioning when working with buttons
     function blockMenuPos() {
       context.emit("blockMenuPos");
     }
 
+    // open stat editing modal and emit charIdx and statIdx
     function editStat(statIdx) {
       context.emit("editStat", { charIdx: props.i, statIdx });
     }
 
+    // open renaming modal and emit charIdx
     function editName() {
       context.emit("editName", props.i);
+    }
+
+    // emit charIdx and val (top, +1, -1, bot) to change position of character
+    function sortCharacter(val) {
+      context.emit("sortCharacter", { charIdx: props.i, val });
     }
 
     return {
@@ -253,6 +264,7 @@ export default {
       blockMenuPos,
       editStat,
       editName,
+      sortCharacter,
     };
   },
 };

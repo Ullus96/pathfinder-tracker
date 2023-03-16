@@ -1,6 +1,6 @@
 <template>
   <!-- modal start -->
-  <div class="modal" v-if="showModal">
+  <div class="modal" v-if="showModal" @keydown.esc="closeModal">
     <div class="modal__cover" @click="closeModal"></div>
     <!-- v-if add stat -->
     <template v-if="isStatAdding">
@@ -40,6 +40,8 @@
                 type="text"
                 placeholder="Название (можно пустое)"
                 v-model="modalData.name"
+                @keyup.enter="addStat"
+                @keyup.esc="closeModal"
               />
             </div>
             <div class="modal__value" v-if="modalData.activeType !== 2">
@@ -49,6 +51,8 @@
                 type="number"
                 placeholder="Цифровое значение"
                 v-model="modalData.current"
+                @keyup.enter="addStat"
+                @keyup.esc="closeModal"
               />
             </div>
             <div
@@ -61,6 +65,8 @@
                 type="number"
                 placeholder="Максимальное значение"
                 v-model="modalData.max"
+                @keyup.enter="addStat"
+                @keyup.esc="closeModal"
               />
             </div>
           </div>
@@ -154,6 +160,8 @@
                 type="text"
                 placeholder="Название (можно пустое)"
                 v-model="modalData.name"
+                @keyup.enter="applyEdit"
+                @keyup.esc="closeModal"
               />
             </div>
             <div class="modal__value" v-if="modalData.activeType !== 2">
@@ -163,6 +171,18 @@
                 type="number"
                 placeholder="Цифровое значение"
                 v-model="modalData.current"
+                style="width: 25%"
+                @keyup.enter="applyEdit"
+                @keyup.esc="closeModal"
+              />
+              <input
+                class="modal__input modal__small-placeholder"
+                type="text"
+                placeholder="+ - * / число (напр.+12)"
+                v-model="modalCalc"
+                style="width: 40%"
+                @keyup.enter="applyEdit"
+                @keyup.esc="closeModal"
               />
             </div>
             <div
@@ -175,6 +195,8 @@
                 type="number"
                 placeholder="Максимальное значение"
                 v-model="modalData.max"
+                @keyup.enter="applyEdit"
+                @keyup.esc="closeModal"
               />
             </div>
           </div>
@@ -248,6 +270,8 @@
                 type="text"
                 placeholder="Название (можно пустое)"
                 v-model="modalData.name"
+                @keyup.enter="applyName"
+                @keyup.esc="closeModal"
               />
             </div>
           </div>
@@ -324,6 +348,23 @@
       </li>
     </ul>
   </header>
+  <footer class="footer">
+    <div class="footer__content">
+      <div class="footer__button">Reset</div>
+      <div class="footer__counter">
+        <div class="footer__button footer__arrow">
+          <i class="fa-solid fa-angle-left"></i>
+        </div>
+        <div class="footer__turn">
+          <p>1</p>
+        </div>
+        <div class="footer__button footer__arrow">
+          <i class="fa-solid fa-angle-right"></i>
+        </div>
+      </div>
+      <div>&nbsp;</div>
+    </div>
+  </footer>
   <section class="content">
     <character
       v-for="(data, i) in characters"
@@ -341,6 +382,7 @@
       @blockMenuPos="blockMenuPos"
       @editStat="editStat"
       @editName="editName"
+      @sortCharacter="sortCharacter"
     ></character>
   </section>
 </template>
@@ -612,13 +654,20 @@ export default {
       modalData.name = "";
       modalData.current = "";
       modalData.max = "";
+      modalData.activeType = 0;
+      modalData.activeIcon = 0;
+      modalData.activeColor = 0;
       wasSetToToggle = false;
+      modalCalc.value = "";
     }
 
     // close modal window
     function closeModal() {
       cleanModalValues();
       showModal.value = false;
+      isStatAdding.value = false;
+      isStatEditing.value = false;
+      isNameEditing.value = false;
     }
 
     // we get character index from Character.vue then we remove
@@ -643,7 +692,7 @@ export default {
     // else if previous type was toggle, and another one was chosen
     // then remove current value from 1 to empty one
     function chooseType(idx) {
-      if (idx == 2) {
+      if (!isStatEditing && idx == 2) {
         modalData.current = 1;
         wasSetToToggle = true;
       } else {
@@ -708,7 +757,6 @@ export default {
       characters[charIdx].isMenuShown = true;
 
       isMenuCoverShown.value = true;
-      console.log(characters);
     }
 
     // edit stats by quick menu
@@ -778,6 +826,9 @@ export default {
       );
     }
 
+    const modalCalc = ref("");
+    const calcSymbols = ["-", "+", "*", "/"];
+
     function applyEdit() {
       const editableStat =
         characters[currentEditable.charIdx].stats[currentEditable.statIdx];
@@ -823,6 +874,25 @@ export default {
         modalData.max
       ) {
         verifiedData.current = modalData.max;
+      }
+      // Calculator functionality:
+      // check if calc input contains one of symbols + - * / at 1st pos
+      else if (
+        modalCalc.value.length > 0 &&
+        typeof modalCalc.value !== "undefined" &&
+        calcSymbols.some((el) => modalCalc.value.split("").at(0).includes(el))
+      ) {
+        const symb = modalCalc.value.split("").at(0);
+        const calcValue = +modalCalc.value.substring(1);
+        if (symb === "+") {
+          verifiedData.current = modalData.current + calcValue;
+        } else if (symb === "-") {
+          verifiedData.current = modalData.current - calcValue;
+        } else if (symb === "/") {
+          verifiedData.current = modalData.current / calcValue;
+        } else if (symb === "*") {
+          verifiedData.current = modalData.current * calcValue;
+        }
       }
       // else just proceed gained data
       else {
@@ -875,6 +945,37 @@ export default {
       isNameEditing.value = false;
     }
 
+    // sort character's position
+    function sortCharacter(payload) {
+      setPointers(payload.charIdx);
+      const editableChar = characters[currentEditable.charIdx];
+      const editableIdx = currentEditable.charIdx;
+      let targetIdx;
+
+      // check target index
+      if (typeof payload.val === "number") {
+        targetIdx = editableIdx + payload.val;
+        // check border values
+        targetIdx < 0
+          ? (targetIdx = 0)
+          : targetIdx > characters.length - 1
+          ? (targetIdx = characters.length - 1)
+          : "";
+      } else {
+        payload.val === "top"
+          ? (targetIdx = 0)
+          : (targetIdx = characters.length - 1);
+      }
+
+      // close menu with it's cover
+      editableChar.isMenuShown = false;
+      closeStatMenuByClickOnCover();
+      // delete 1 element from the character's index (character itself)
+      characters.splice(editableIdx, 1);
+      // paste at target index with 0 deleted elements relocated character
+      characters.splice(targetIdx, 0, editableChar);
+    }
+
     return {
       characters,
       showModal,
@@ -884,6 +985,7 @@ export default {
       isStatAdding,
       isStatEditing,
       isNameEditing,
+      modalCalc,
       addCharacter,
       addStat,
       plusStat,
@@ -902,6 +1004,7 @@ export default {
       applyEdit,
       editName,
       applyName,
+      sortCharacter,
     };
   },
 };
