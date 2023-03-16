@@ -55,6 +55,11 @@
 	&__btn {
 		padding: 0.6rem 1.2rem;
 		cursor: pointer;
+
+		&::selection {
+			color: none;
+			background: none;
+		}
 	}
 
 	&__btn:hover {

@@ -5,20 +5,16 @@
       class="menu"
       v-if="data.isMenuShown"
       :style="[
-        isClickedOnRightHalf ? 'right: 0.3rem' : 'left: 0.3rem',
+        isClickedOnRightHalf ? 'right: 0.3rem' : 'left: 0.2rem',
         isClickedOnBottom
-          ? 'bottom: 3.3rem; flex-direction: column-reverse;'
+          ? isRepositionShown
+            ? 'top: -3.3rem; flex-direction: column-reverse;'
+            : 'top: -9.3rem; flex-direction: column-reverse;'
           : 'top: 3.3rem',
       ]"
     >
       <!-- position menu -->
       <template v-if="isRepositionShown">
-        <div class="menu__item">
-          <p class="menu__btn" style="cursor: auto">
-            #{{ positionInArray }} в списке
-          </p>
-        </div>
-
         <div class="menu__item">
           <div class="menu__counters">
             <div class="menu__counter menu__btn">
@@ -75,6 +71,7 @@
         "
       >
         <i class="fa-solid fa-sort"></i>
+        <p class="person__position">#{{ positionInArray }}</p>
       </div>
       <div class="person__title" :class="`bg-` + data.color">
         <div class="person__name">
@@ -106,13 +103,17 @@
         :key="data.stats[idx]"
         :idx="idx"
         :stat="stat"
+        :isMenuPositionBlocked="isMenuPositionBlocked"
         @removeStat="removeStat"
         @openStatMenu="openStatMenu"
+        @changeStat="changeStat"
+        @toggleStat="toggleStat"
+        @blockMenuPos="blockMenuPos"
       >
       </stat>
       <!-- end of single stat -->
       <!-- plus -->
-      <div class="stats__item stats__item--add" @click="editStat">
+      <div class="stats__item stats__item--add" @click="plusStat">
         <i class="fa-solid fa-plus"></i>
       </div>
       <!-- end of plus -->
@@ -125,13 +126,16 @@ import { ref, computed } from "vue";
 import Stat from "./Stat.vue";
 export default {
   components: { Stat },
-  props: ["data", "i"],
+  props: ["data", "i", "isMenuPositionBlocked"],
   emits: [
     "removeCharacter",
     "removeStat",
-    "addStat",
+    "plusStat",
     "openStatMenu",
     "openCharMenu",
+    "changeStat",
+    "toggleStat",
+    "blockMenuPos",
   ],
   setup(props, context) {
     function removeCharacter() {
@@ -146,8 +150,8 @@ export default {
     }
 
     // by clicking on plus, send index of current character to App
-    function editStat() {
-      context.emit("editStat", props.i);
+    function plusStat() {
+      context.emit("plusStat", props.i);
     }
 
     // get index of stat and send it to App.vue
@@ -170,7 +174,7 @@ export default {
       } else {
         isEditMenuShown.value = true;
       }
-      console.log("bla");
+
       context.emit("openCharMenu", props.i);
     }
 
@@ -182,24 +186,44 @@ export default {
     let isClickedOnBottom = ref(false);
 
     function getMousePosition(e) {
-      // check if mouse clicked on the right Half of a page
-      if (e.pageX > window.innerWidth / 2) {
-        isClickedOnRightHalf.value = true;
-      } else {
-        isClickedOnRightHalf.value = false;
-      }
+      if (!props.isMenuPositionBlocked) {
+        // check if mouse clicked on the right Half of a page
+        if (e.clientX > window.innerWidth / 2) {
+          isClickedOnRightHalf.value = true;
+        } else {
+          isClickedOnRightHalf.value = false;
+        }
 
-      // check if mouse clicked on bottom 80% of a page
-      if (e.pageY > window.innerHeight * 0.8) {
-        isClickedOnBottom.value = true;
-      } else {
-        isClickedOnBottom.value = false;
+        // check if mouse clicked on bottom 80% of a page
+        if (e.clientY > window.innerHeight * 0.8) {
+          isClickedOnBottom.value = true;
+          console.log(e);
+        } else {
+          isClickedOnBottom.value = false;
+        }
       }
+      blockMenuPos();
     }
 
     const positionInArray = computed(() => {
       return props.i + 1;
     });
+
+    function changeStat(payload) {
+      context.emit("changeStat", {
+        charIdx: props.i,
+        statIdx: payload[0],
+        val: payload[1],
+      });
+    }
+
+    function toggleStat(statIdx) {
+      context.emit("toggleStat", { charIdx: props.i, statIdx });
+    }
+
+    function blockMenuPos() {
+      context.emit("blockMenuPos");
+    }
 
     return {
       isClickedOnRightHalf,
@@ -209,10 +233,13 @@ export default {
       isEditMenuShown,
       removeCharacter,
       removeStat,
-      editStat,
+      plusStat,
       openStatMenu,
       getMousePosition,
       openCharMenu,
+      changeStat,
+      toggleStat,
+      blockMenuPos,
     };
   },
 };

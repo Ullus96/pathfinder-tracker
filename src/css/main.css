@@ -315,18 +315,34 @@ h6 {
   border-radius: 0.6rem;
   position: relative;
 }
+.person__position {
+  cursor: default;
+}
+.person__position::-moz-selection {
+  color: none;
+  background: none;
+}
+.person__position::selection {
+  color: none;
+  background: none;
+}
 .person__header {
   display: flex;
   overflow: hidden;
   border-top-right-radius: 0.6rem;
 }
 .person__sort-btn {
-  padding: 0.6rem 1.2rem;
+  padding: 0.6rem 0.6rem 0.6rem 1.2rem;
   color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.person__sort-btn i {
   cursor: pointer;
   transition: all 0.1s ease-in-out;
 }
-.person__sort-btn:hover {
+.person__sort-btn i:hover {
   transform: scale(1.2);
 }
 .person__title {
@@ -356,6 +372,14 @@ h6 {
   display: flex;
   flex-wrap: wrap;
   gap: 0.6rem;
+}
+.stats *::-moz-selection {
+  color: none;
+  background: none;
+}
+.stats *::selection {
+  color: none;
+  background: none;
 }
 .stats__item {
   padding: 0.6rem 0.9rem;
@@ -459,6 +483,14 @@ h6 {
 .menu__btn {
   padding: 0.6rem 1.2rem;
   cursor: pointer;
+}
+.menu__btn::-moz-selection {
+  color: none;
+  background: none;
+}
+.menu__btn::selection {
+  color: none;
+  background: none;
 }
 .menu__btn:hover {
   background-color: #2a2d37;

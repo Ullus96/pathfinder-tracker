@@ -158,11 +158,15 @@
       :key="i"
       :i="i"
       :data="data"
+      :isMenuPositionBlocked="isMenuPositionBlocked"
       @removeCharacter="removeCharacter"
       @removeStat="removeStat"
-      @editStat="editStat"
+      @plusStat="plusStat"
       @openStatMenu="openStatMenu"
       @openCharMenu="openCharMenu"
+      @changeStat="changeStat"
+      @toggleStat="toggleStat"
+      @blockMenuPos="blockMenuPos"
     ></character>
   </section>
 </template>
@@ -345,8 +349,8 @@ export default {
         currentEditable.statIdx = payload.statIdx;
     }
 
-    // open modal window on clicked 'plus' or 'edit' btns
-    function editStat(charIdx) {
+    // open modal window on clicked 'plus' btn
+    function plusStat(charIdx) {
       showModal.value = true;
       currentEditable.charIdx = charIdx;
     }
@@ -467,18 +471,28 @@ export default {
     // QUICK-MENU
 
     let isMenuCoverShown = ref(false);
+    let isMenuPositionBlocked = ref(false);
+
+    function blockMenuPos() {
+      isMenuPositionBlocked.value = true;
+    }
 
     function closeMenu() {
       isMenuCoverShown.value = false;
+      isMenuPositionBlocked.value = false;
     }
 
     function closeStatMenuByClickOnCover() {
-      console.log(
-        `Меню закрыто на: ${currentEditable.charIdx},${currentEditable.statIdx}`
-      );
+      // console.log(
+      //   `Меню закрыто на: ${currentEditable.charIdx},${currentEditable.statIdx}`
+      // );
 
-      // if (currentEditable.statIdx || currentEditable.statIdx === 0) {
-      if (characters[currentEditable.charIdx].stats.length) {
+      // check if stats exists, and only then set isMenuShown to false
+      if (
+        typeof characters[currentEditable.charIdx].stats[
+          currentEditable.statIdx
+        ] !== "undefined"
+      ) {
         characters[currentEditable.charIdx].stats[
           currentEditable.statIdx
         ].isMenuShown = false;
@@ -486,12 +500,12 @@ export default {
 
       characters[currentEditable.charIdx].isMenuShown = false;
 
-      isMenuCoverShown.value = false;
+      closeMenu();
     }
 
     function openStatMenu(payload) {
       setPointers(payload);
-      console.log(`Меню открыто на: ${payload.charIdx},${payload.statIdx}`);
+      // console.log(`Меню открыто на: ${payload.charIdx},${payload.statIdx}`);
 
       characters[payload.charIdx].stats[payload.statIdx].isMenuShown = true;
 
@@ -500,11 +514,10 @@ export default {
 
     // Character Menu
     function openCharMenu(charIdx) {
-      const pointersPayload = {
+      setPointers({
         charIdx: charIdx,
-        statIdx: "",
-      };
-      setPointers(pointersPayload);
+        statIdx: undefined,
+      });
 
       characters[charIdx].isMenuShown = true;
 
@@ -512,14 +525,48 @@ export default {
       console.log(characters);
     }
 
+    // edit stats by quick menu
+    function changeStat(payload) {
+      // make a shorter variable
+      const editableStat = characters[payload.charIdx].stats[payload.statIdx];
+
+      // if we get number as a payload value, then calculate (and check at 0 and max vals)
+      // else if we got a 'min' or 'max', set current val as 0 or max.
+      if (typeof payload.val === "number") {
+        editableStat.current += payload.val;
+        // block of code that doesn't allow to go past min or max values
+        // removed bc GM said that players would be need minus vals on some cases
+        // ---
+        // if (editableStat.current < 0) editableStat.current = 0;
+        // if (editableStat.max && editableStat.current > editableStat.max) {
+        //   editableStat.current = editableStat.max;
+        // }
+      } else {
+        if (payload.val === "min") {
+          editableStat.current = 0;
+        } else {
+          editableStat.current = editableStat.max;
+        }
+      }
+    }
+
+    function toggleStat(payload) {
+      // make a shorter variable
+      const editableStat = characters[payload.charIdx].stats[payload.statIdx];
+      editableStat.current === 0
+        ? (editableStat.current = 1)
+        : (editableStat.current = 0);
+    }
+
     return {
       characters,
       showModal,
       modalData,
       isMenuCoverShown,
+      isMenuPositionBlocked,
       addCharacter,
       addStat,
-      editStat,
+      plusStat,
       closeModal,
       removeCharacter,
       removeStat,
@@ -528,6 +575,9 @@ export default {
       closeStatMenuByClickOnCover,
       openStatMenu,
       openCharMenu,
+      changeStat,
+      toggleStat,
+      blockMenuPos,
     };
   },
 };

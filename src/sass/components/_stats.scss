@@ -4,6 +4,11 @@
 	flex-wrap: wrap;
 	gap: 0.6rem;
 
+	& *::selection {
+		color: none;
+		background: none;
+	}
+
 	&__item {
 		padding: 0.6rem 0.9rem;
 		border-radius: 0.4rem;

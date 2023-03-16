@@ -25,22 +25,28 @@
       <!-- check if stat type isn't toggleable (bc it doesn't make sense) -->
       <div class="menu__item" v-if="stat.type !== 'toggle'">
         <div class="menu__counters">
-          <div class="menu__counter menu__btn">-5</div>
-          <div class="menu__counter menu__btn">-1</div>
-          <div class="menu__counter menu__btn">+1</div>
-          <div class="menu__counter menu__btn">+5</div>
+          <div class="menu__counter menu__btn" @click="changeStat(-5)">-5</div>
+          <div class="menu__counter menu__btn" @click="changeStat(-1)">-1</div>
+          <div class="menu__counter menu__btn" @click="changeStat(1)">+1</div>
+          <div class="menu__counter menu__btn" @click="changeStat(5)">+5</div>
         </div>
       </div>
       <!-- and here v-else type is toggleable -->
       <div class="menu__item" v-else>
-        <div class="menu__counter menu__btn">Переключить</div>
+        <div class="menu__counter menu__btn" @click="toggleStat()">
+          Переключить
+        </div>
       </div>
 
       <!-- same here; we don't need min/max value for toggleable -->
       <div class="menu__item" v-if="stat.max">
         <div class="menu__counters">
-          <div class="menu__counter menu__btn">Min</div>
-          <div class="menu__counter menu__btn">Max</div>
+          <div class="menu__counter menu__btn" @click="changeStat('min')">
+            Min
+          </div>
+          <div class="menu__counter menu__btn" @click="changeStat('max')">
+            Max
+          </div>
         </div>
       </div>
 
@@ -70,16 +76,20 @@
     </div>
     <!-- icon and name -->
     <i class="fa-solid" :class="`fa-${stat.icon}`"></i>
-    <p v-if="stat.name" class="stats__item--name">{{ stat.name }}</p>
+    <p v-if="stat.name" class="stats__item--name">
+      {{ stat.name }}
+    </p>
 
     <!-- values block. Also check if there is a value (or is it a note?) -->
     <div
       class="stats__item--value"
-      v-if="stat.current || stat.type === 'toggle'"
+      v-if="typeof stat.current == 'number' || stat.type === 'toggle'"
     >
       <!-- if type is value and health -->
       <div v-if="stat.type !== 'toggle'" class="value">
-        <p class="value--current">{{ stat.current }}</p>
+        <p class="value--current">
+          {{ stat.current }}
+        </p>
         <!-- check if there is max value to add a breakpoint and second value -->
         <template v-if="stat.max">
           <p class="value--breakpoint">/</p>
@@ -117,8 +127,14 @@
 <script>
 import { computed, ref } from "vue";
 export default {
-  props: ["stat", "idx"],
-  emits: ["removeStat", "openStatMenu"],
+  props: ["stat", "idx", "isMenuPositionBlocked"],
+  emits: [
+    "removeStat",
+    "openStatMenu",
+    "changeStat",
+    "toggleStat",
+    "blockMenuPos",
+  ],
   setup(props, context) {
     const healthPercentage = computed(() => {
       return `${Math.floor((props.stat.current / props.stat.max) * 100)}%`;
@@ -139,19 +155,31 @@ export default {
     let isClickedOnBottom = ref(false);
 
     function getMousePosition(e) {
-      // check if mouse clicked on the right Half of a page
-      if (e.pageX > window.innerWidth / 2) {
-        isClickedOnRightHalf.value = true;
-      } else {
-        isClickedOnRightHalf.value = false;
-      }
+      if (!props.isMenuPositionBlocked) {
+        // check if mouse clicked on the right Half of a page
+        if (e.clientX > window.innerWidth / 2) {
+          isClickedOnRightHalf.value = true;
+        } else {
+          isClickedOnRightHalf.value = false;
+        }
 
-      // check if mouse clicked on bottom 80% of a page
-      if (e.pageY > window.innerHeight * 0.8) {
-        isClickedOnBottom.value = true;
-      } else {
-        isClickedOnBottom.value = false;
+        // check if mouse clicked on bottom 80% of a page
+        if (e.clientY > window.innerHeight * 0.8) {
+          isClickedOnBottom.value = true;
+        } else {
+          isClickedOnBottom.value = false;
+        }
       }
+      context.emit("blockMenuPos");
+    }
+
+    // emit current stat idx with value (-1 -5 1 5 min max)
+    function changeStat(val) {
+      context.emit("changeStat", [props.idx, val]);
+    }
+
+    function toggleStat() {
+      context.emit("toggleStat", props.idx);
     }
 
     return {
@@ -161,6 +189,8 @@ export default {
       removeStat,
       openStatMenu,
       getMousePosition,
+      changeStat,
+      toggleStat,
     };
   },
 };
