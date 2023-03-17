@@ -1,0 +1,15 @@
+.conditions {
+	border-top: 1px solid rgba(mix($color-white, $color-black, 60%), 0.15);
+
+	&__item {
+		background: $color-bg-lighter;
+		color: $color-white;
+		font-size: 0.8em;
+		outline: 2px solid $color-bg-darkest;
+		box-shadow: 0 0 0.3rem rgba($color-black, 0.3);
+	}
+
+	&__menu {
+		font-size: 2.2rem;
+	}
+}

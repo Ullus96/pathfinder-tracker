@@ -40,12 +40,14 @@
 			background-color: mix($color-bg-lighter, $color-blue, 85%);
 			color: $color-white;
 			cursor: pointer;
+			display: flex;
+			gap: 0.6rem;
 
-			& i {
+			& > i {
 				transition: all 0.1s ease-in-out;
 			}
 
-			&:hover i {
+			&:hover > i {
 				transform: scale(1.2);
 			}
 		}

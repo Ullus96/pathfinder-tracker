@@ -308,6 +308,39 @@
       </div>
     </template>
     <!-- end of edit name -->
+    <!-- start of condition modal -->
+    <template v-if="isConditionAdding">
+      <div class="modal__card">
+        <div class="modal__header">
+          <h2>Добавить состояние</h2>
+          <div class="modal__close" @click="closeModal">&#10005;</div>
+        </div>
+        <!-- modal main content -->
+        <div class="modal__content">
+          <!-- conditions picker -->
+          <div class="modal__block modal__scrollable">
+            <div class="modal__conditions-list">
+              <div
+                class="modal__condition btn"
+                v-for="(condition, idx) in modalData.conditions"
+                :key="idx"
+                @click="addCondition(idx)"
+              >
+                <i :class="[`fa-solid fa-${condition.icon}`]"></i>
+                {{ condition.name }}
+              </div>
+            </div>
+          </div>
+          <!-- end of conditions -->
+
+          <!-- btns -->
+          <div class="modal__btns">
+            <div class="btn btn-red" @click="closeModal">Отмена</div>
+          </div>
+        </div>
+      </div>
+    </template>
+    <!-- end of edit name -->
   </div>
   <!-- modal end -->
   <!-- menu cover -->
@@ -384,6 +417,11 @@
       @editStat="editStat"
       @editName="editName"
       @sortCharacter="sortCharacter"
+      @openConditionMenu="openConditionMenu"
+      @changeCondition="changeCondition"
+      @toggleCondition="toggleCondition"
+      @removeCondition="removeCondition"
+      @plusCondition="plusCondition"
     ></character>
   </section>
 </template>
@@ -394,6 +432,359 @@ import { ref, reactive } from "vue";
 export default {
   components: { Character },
   setup() {
+    // data to fullfill the stat adding modal window
+    const modalData = reactive({
+      activeType: 0,
+      types: ["Стат", "Мин/макс", "Вкл/выкл", "ХП-бар"],
+      typesName: ["value", "minmax", "toggle", "health"],
+      activeIcon: 0,
+      icons: [
+        "circle",
+        "hand-fist",
+        "hat-wizard",
+        "dragon",
+        "dice-d6",
+        "dice-d20",
+        "shoe-prints",
+        "person-running",
+        "eye",
+        "skull",
+        "shield-halved",
+        "rotate-left",
+        "heart",
+        "brain",
+        "book",
+        "bolt",
+        "triangle-exclamation",
+        "diamond",
+        "square",
+        "fire",
+      ],
+      activeColor: 0,
+      colors: ["blue", "red", "yellow", "green", "white"],
+      name: "",
+      current: "",
+      max: "",
+
+      conditions: [
+        {
+          name: "Бегство",
+          nameEng: "Fleeing",
+          icon: "person-running",
+          type: "toggle",
+          current: 1,
+          max: "",
+          isMenuShown: false,
+        },
+        {
+          name: "Без сознания",
+          nameEng: "Unconscious",
+          icon: "power-off",
+          type: "toggle",
+          current: 1,
+          max: "",
+          isMenuShown: false,
+        },
+        {
+          name: "Глухота",
+          nameEng: "Deafened",
+          icon: "ear-deaf",
+          type: "toggle",
+          current: 1,
+          max: "",
+          isMenuShown: false,
+        },
+        {
+          name: "Заворожен",
+          nameEng: "Fascinated",
+          icon: "face-dizzy",
+          type: "toggle",
+          current: 1,
+          max: "",
+          isMenuShown: false,
+        },
+        {
+          name: "Замедлен",
+          nameEng: "Slowed",
+          icon: "user-minus",
+          type: "minmax",
+          current: 1,
+          max: 5,
+          isMenuShown: false,
+        },
+        {
+          name: "Замечен",
+          nameEng: "Observed",
+          icon: "eye",
+          type: "toggle",
+          current: 1,
+          max: "",
+          isMenuShown: false,
+        },
+        {
+          name: "Замешательство",
+          nameEng: "Confused",
+          icon: "question",
+          type: "toggle",
+          current: 1,
+          max: "",
+          isMenuShown: false,
+        },
+        {
+          name: "Застигнут врасплох",
+          nameEng: "Flat-footed",
+          icon: "shoe-prints",
+          type: "toggle",
+          current: 1,
+          max: "",
+          isMenuShown: false,
+        },
+        {
+          name: "Истощен",
+          nameEng: "Drained",
+          icon: "droplet",
+          type: "minmax",
+          current: 1,
+          max: 5,
+          isMenuShown: false,
+        },
+        {
+          name: "Напуган",
+          nameEng: "Frightened",
+          icon: "face-frown-open",
+          type: "minmax",
+          current: 1,
+          max: 5,
+          isMenuShown: false,
+        },
+        {
+          name: "Невидимый",
+          nameEng: "Invisible",
+          icon: "ghost",
+          type: "toggle",
+          current: 1,
+          max: "",
+          isMenuShown: false,
+        },
+        {
+          name: "Незамечен",
+          nameEng: "Unnoticed",
+          icon: "user-large-slash",
+          type: "minmax",
+          current: 1,
+          max: 5,
+          isMenuShown: false,
+        },
+        {
+          name: "Необнаружен",
+          nameEng: "Undetected",
+          icon: "user-secret",
+          type: "minmax",
+          current: 1,
+          max: 5,
+          isMenuShown: false,
+        },
+        {
+          name: "Неуклюжесть",
+          nameEng: "Clumsy",
+          icon: "scale-unbalanced",
+          type: "minmax",
+          current: 1,
+          max: 5,
+          isMenuShown: false,
+        },
+        {
+          name: "Ничком",
+          nameEng: "Prone",
+          icon: "person-praying",
+          type: "toggle",
+          current: 1,
+          max: "",
+          isMenuShown: false,
+        },
+        {
+          name: "Обездвижен",
+          nameEng: "Immobilized",
+          icon: "link",
+          type: "toggle",
+          current: 1,
+          max: "",
+          isMenuShown: false,
+        },
+        {
+          name: "Обречен",
+          nameEng: "Doomed",
+          icon: "skull-crossbones",
+          type: "minmax",
+          current: 1,
+          max: 5,
+          isMenuShown: false,
+        },
+        {
+          name: "Одурманен",
+          nameEng: "Stupefied",
+          icon: "brain",
+          type: "minmax",
+          current: 1,
+          max: 5,
+          isMenuShown: false,
+        },
+        {
+          name: "Окаменение",
+          nameEng: "Petrified",
+          icon: "gem",
+          type: "minmax",
+          current: 1,
+          max: 5,
+          isMenuShown: false,
+        },
+        {
+          name: "Ослаблен",
+          nameEng: "Enfeebled",
+          icon: "crutch",
+          type: "minmax",
+          current: 1,
+          max: 5,
+          isMenuShown: false,
+        },
+        {
+          name: "Ослеплен",
+          nameEng: "Dazzled",
+          icon: "sun",
+          type: "toggle",
+          current: 1,
+          max: "",
+          isMenuShown: false,
+        },
+        {
+          name: "Ошеломлен",
+          nameEng: "Stunned",
+          icon: "user-xmark",
+          type: "minmax",
+          current: 1,
+          max: 5,
+          isMenuShown: false,
+        },
+        {
+          name: "Парализован",
+          nameEng: "Paralyzed",
+          icon: "person",
+          type: "minmax",
+          current: 1,
+          max: 5,
+          isMenuShown: false,
+        },
+        {
+          name: "Перегружен",
+          nameEng: "Encumbered",
+          icon: "weight-hanging",
+          type: "toggle",
+          current: 1,
+          max: "",
+          isMenuShown: false,
+        },
+        {
+          name: "Под контролем",
+          nameEng: "Controlled",
+          icon: "face-grin-hearts",
+          type: "toggle",
+          current: 1,
+          max: "",
+          isMenuShown: false,
+        },
+        {
+          name: "При смерти",
+          nameEng: "Dying",
+          icon: "skull",
+          type: "minmax",
+          current: 1,
+          max: 5,
+          isMenuShown: false,
+        },
+        {
+          name: "Ранен",
+          nameEng: "Wounded",
+          icon: "user-injured",
+          type: "minmax",
+          current: 1,
+          max: 5,
+          isMenuShown: false,
+        },
+        {
+          name: "Сдерживаем",
+          nameEng: "Restrained",
+          icon: "user-lock",
+          type: "toggle",
+          current: 1,
+          max: "",
+          isMenuShown: false,
+        },
+        {
+          name: "Скрыт",
+          nameEng: "Concealed",
+          icon: "cloud",
+          type: "toggle",
+          current: 1,
+          max: "",
+          isMenuShown: false,
+        },
+        {
+          name: "Слепота",
+          nameEng: "Blinded",
+          icon: "eye-slash",
+          type: "toggle",
+          current: 1,
+          max: "",
+          isMenuShown: false,
+        },
+        {
+          name: "Спрятан",
+          nameEng: "Hidden",
+          icon: "mask",
+          type: "toggle",
+          current: 1,
+          max: "",
+          isMenuShown: false,
+        },
+        {
+          name: "Схвачен",
+          nameEng: "Grabbed",
+          icon: "hand-back-fist",
+          type: "toggle",
+          current: 1,
+          max: "",
+          isMenuShown: false,
+        },
+        {
+          name: "Тошнота",
+          nameEng: "Sickened",
+          icon: "head-side-cough",
+          type: "minmax",
+          current: 1,
+          max: 5,
+          isMenuShown: false,
+        },
+        {
+          name: "Ускорен",
+          nameEng: "Quickened",
+          icon: "user-plus",
+          type: "minmax",
+          current: 1,
+          max: 5,
+          isMenuShown: false,
+        },
+        {
+          name: "Утомление",
+          nameEng: "Fatigued",
+          icon: "bed",
+          type: "minmax",
+          current: 1,
+          max: 5,
+          isMenuShown: false,
+        },
+      ],
+    });
+
     const characters = reactive([
       {
         name: "Шпингалет",
@@ -438,6 +829,28 @@ export default {
             isMenuShown: false,
           },
         ],
+        conditions: [
+          {
+            name: "Слепота",
+            nameEng: "Blinded",
+            color: "white",
+            icon: "eye",
+            type: "toggle",
+            current: 1,
+            max: "",
+            isMenuShown: false,
+          },
+          {
+            name: "Неуклюжесть",
+            nameEng: "Clumsy",
+            color: "white",
+            icon: "shoe-prints",
+            type: "minmax",
+            current: 1,
+            max: 5,
+            isMenuShown: false,
+          },
+        ],
       },
       {
         name: "Красный Барон",
@@ -452,6 +865,15 @@ export default {
             type: "health",
             current: 103,
             max: 250,
+            isMenuShown: false,
+          },
+          {
+            name: "DEF",
+            color: "blue",
+            icon: "shield-halved",
+            type: "value",
+            current: 8,
+            max: "",
             isMenuShown: false,
           },
           {
@@ -482,6 +904,7 @@ export default {
             isMenuShown: false,
           },
         ],
+        conditions: [],
       },
       {
         name: "Заметка",
@@ -499,6 +922,7 @@ export default {
             isMenuShown: false,
           },
         ],
+        conditions: [],
       },
     ]);
 
@@ -506,41 +930,7 @@ export default {
     let isStatAdding = ref(false);
     let isStatEditing = ref(false);
     let isNameEditing = ref(false);
-
-    // data to fullfill the stat adding modal window
-    const modalData = reactive({
-      activeType: 0,
-      types: ["Стат", "Мин/макс", "Вкл/выкл", "ХП-бар"],
-      typesName: ["value", "minmax", "toggle", "health"],
-      activeIcon: 0,
-      icons: [
-        "circle",
-        "hand-fist",
-        "hat-wizard",
-        "dragon",
-        "dice-d6",
-        "dice-d20",
-        "shoe-prints",
-        "person-running",
-        "eye",
-        "skull",
-        "shield-halved",
-        "rotate-left",
-        "heart",
-        "brain",
-        "book",
-        "bolt",
-        "triangle-exclamation",
-        "diamond",
-        "square",
-        "fire",
-      ],
-      activeColor: 0,
-      colors: ["blue", "red", "yellow", "green", "white"],
-      name: "",
-      current: "",
-      max: "",
-    });
+    let isConditionAdding = ref(false);
 
     // create a new character by clicking on the top right icons
     function addCharacter(name, color, icon) {
@@ -550,6 +940,7 @@ export default {
         icon: icon,
         isMenuShown: false,
         stats: [],
+        conditions: [],
       };
       // add generated character to array of characters
       characters.push(generatedCharacter);
@@ -559,6 +950,7 @@ export default {
     const currentEditable = reactive({
       charIdx: 0,
       statIdx: 0,
+      condIdx: 0,
     });
 
     // set pointers on currently active stat
@@ -569,6 +961,9 @@ export default {
       if (payload.statIdx || payload.statIdx === 0) {
         currentEditable.statIdx = payload.statIdx;
       }
+      if (payload.condIdx || payload.condIdx === 0) {
+        currentEditable.condIdx = payload.condIdx;
+      }
     }
 
     // open modal window on clicked 'plus' btn
@@ -576,6 +971,14 @@ export default {
       isStatAdding.value = true;
       showModal.value = true;
       currentEditable.charIdx = charIdx;
+    }
+
+    function plusCondition(charIdx) {
+      isConditionAdding.value = true;
+      showModal.value = true;
+      currentEditable.charIdx = charIdx;
+
+      console.log(`condition added on ${charIdx}`);
     }
 
     // add a new stat when all data checked and "proceed" button
@@ -649,6 +1052,20 @@ export default {
       isStatAdding.value = false;
     }
 
+    function addCondition(idx) {
+      const generatedCondition = {
+        name: modalData.conditions[idx].name,
+        icon: modalData.conditions[idx].icon,
+        type: modalData.conditions[idx].type,
+        current: modalData.conditions[idx].current,
+        max: modalData.conditions[idx].max,
+        isMenuShown: false,
+      };
+
+      characters[currentEditable.charIdx].conditions.push(generatedCondition);
+      closeModal();
+    }
+
     // clean all variables to make a new opened modal an empty one
     function cleanModalValues() {
       // showModal.value = false;
@@ -665,10 +1082,12 @@ export default {
     // close modal window
     function closeModal() {
       cleanModalValues();
+      closeStatMenuByClickOnCover();
       showModal.value = false;
       isStatAdding.value = false;
       isStatEditing.value = false;
       isNameEditing.value = false;
+      isConditionAdding.value = false;
     }
 
     // we get character index from Character.vue then we remove
@@ -683,6 +1102,11 @@ export default {
     // then we remove certain stat from render
     function removeStat(payload) {
       characters[payload.charIdx].stats.splice(payload.statIdx, 1);
+      closeMenu();
+    }
+
+    function removeCondition(payload) {
+      characters[payload.charIdx].conditions.splice(payload.condIdx, 1);
       closeMenu();
     }
 
@@ -719,12 +1143,13 @@ export default {
     }
 
     function closeStatMenuByClickOnCover() {
-      // console.log(
-      //   `Меню закрыто на: ${currentEditable.charIdx},${currentEditable.statIdx}`
-      // );
+      console.log(
+        `Меню закрыто на: charIdx:${currentEditable.charIdx}, statIdx:${currentEditable.statIdx}, condIdx:${currentEditable.condIdx}`
+      );
 
       // check if stats exists, and only then set isMenuShown to false
       if (
+        characters[currentEditable.charIdx].stats.length > 0 &&
         typeof characters[currentEditable.charIdx].stats[
           currentEditable.statIdx
         ] !== "undefined"
@@ -732,6 +1157,20 @@ export default {
         characters[currentEditable.charIdx].stats[
           currentEditable.statIdx
         ].isMenuShown = false;
+        // console.log(`statIdx is not undefined`);
+      }
+
+      // check if conditions exists
+      if (
+        characters[currentEditable.charIdx].conditions.length > 0 &&
+        typeof characters[currentEditable.charIdx].conditions[
+          currentEditable.condIdx
+        ] !== "undefined"
+      ) {
+        characters[currentEditable.charIdx].conditions[
+          currentEditable.condIdx
+        ].isMenuShown = false;
+        // console.log(`condIdx is not undefined`);
       }
 
       characters[currentEditable.charIdx].isMenuShown = false;
@@ -745,6 +1184,15 @@ export default {
 
       characters[payload.charIdx].stats[payload.statIdx].isMenuShown = true;
 
+      isMenuCoverShown.value = true;
+    }
+
+    function openConditionMenu(payload) {
+      setPointers(payload);
+
+      characters[payload.charIdx].conditions[
+        payload.condIdx
+      ].isMenuShown = true;
       isMenuCoverShown.value = true;
     }
 
@@ -786,6 +1234,22 @@ export default {
       }
     }
 
+    function changeCondition(payload) {
+      // make a shorter variable
+      const editableCondition =
+        characters[payload.charIdx].conditions[payload.condIdx];
+
+      if (typeof payload.val === "number") {
+        editableCondition.current += payload.val;
+      } else {
+        if (payload.val === "min") {
+          editableCondition.current = 0;
+        } else {
+          editableCondition.current = editableCondition.max;
+        }
+      }
+    }
+
     function toggleStat(payload) {
       // make a shorter variable
       const editableStat = characters[payload.charIdx].stats[payload.statIdx];
@@ -794,6 +1258,18 @@ export default {
         : (editableStat.current = 0);
 
       editableStat.isMenuShown = false;
+      closeStatMenuByClickOnCover();
+    }
+
+    function toggleCondition(payload) {
+      // make a shorter variable
+      const editableCondition =
+        characters[payload.charIdx].conditions[payload.condIdx];
+      editableCondition.current === 0
+        ? (editableCondition.current = 1)
+        : (editableCondition.current = 0);
+
+      editableCondition.isMenuShown = false;
       closeStatMenuByClickOnCover();
     }
 
@@ -1016,6 +1492,7 @@ export default {
       isStatAdding,
       isStatEditing,
       isNameEditing,
+      isConditionAdding,
       modalCalc,
       turnIdx,
       fullTurns,
@@ -1040,6 +1517,12 @@ export default {
       sortCharacter,
       makeTurn,
       resetTurns,
+      openConditionMenu,
+      changeCondition,
+      toggleCondition,
+      removeCondition,
+      plusCondition,
+      addCondition,
     };
   },
 };

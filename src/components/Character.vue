@@ -9,7 +9,7 @@
         isClickedOnBottom
           ? isRepositionShown
             ? 'top: -3.3rem; flex-direction: column-reverse;'
-            : 'top: -9.3rem; flex-direction: column-reverse;'
+            : 'top: -13.3rem; flex-direction: column-reverse;'
           : 'top: 3.3rem',
       ]"
     >
@@ -38,6 +38,9 @@
       <template v-if="isEditMenuShown">
         <div class="menu__item">
           <p class="menu__btn" @click="editName">Изменить</p>
+        </div>
+        <div class="menu__item">
+          <p class="menu__btn" @click="plusCondition">Доб. состояние</p>
         </div>
         <!-- reverse position of safe space is clicked on bottom of screen -->
         <div
@@ -120,14 +123,29 @@
       </div>
       <!-- end of plus -->
     </div>
+    <div class="stats conditions" v-if="data.conditions.length > 0">
+      <condition
+        v-for="(condition, idx) in data.conditions"
+        :key="data.conditions[idx]"
+        :idx="idx"
+        :condition="condition"
+        :isMenuPositionBlocked="isMenuPositionBlocked"
+        @openConditionMenu="openConditionMenu"
+        @changeCondition="changeCondition"
+        @toggleCondition="toggleCondition"
+        @blockMenuPos="blockMenuPos"
+        @removeCondition="removeCondition"
+      ></condition>
+    </div>
   </div>
 </template>
 
 <script>
 import { ref, computed } from "vue";
 import Stat from "./Stat.vue";
+import Condition from "./Condition.vue";
 export default {
-  components: { Stat },
+  components: { Stat, Condition },
   props: ["data", "i", "isMenuPositionBlocked", "turnIdx"],
   emits: [
     "removeCharacter",
@@ -141,6 +159,11 @@ export default {
     "editStat",
     "editName",
     "sortCharacter",
+    "openConditionMenu",
+    "changeCondition",
+    "toggleCondition",
+    "removeCondition",
+    "plusCondition",
   ],
   setup(props, context) {
     function removeCharacter() {
@@ -154,15 +177,27 @@ export default {
       context.emit("removeStat", { charIdx: props.i, statIdx });
     }
 
+    function removeCondition(condIdx) {
+      context.emit("removeCondition", { charIdx: props.i, condIdx });
+    }
+
     // by clicking on plus, send index of current character to App
     function plusStat() {
       context.emit("plusStat", props.i);
+    }
+
+    function plusCondition() {
+      context.emit("plusCondition", props.i);
     }
 
     // get index of stat and send it to App.vue
     // and add a current character index
     function openStatMenu(statIdx) {
       context.emit("openStatMenu", { charIdx: props.i, statIdx });
+    }
+
+    function openConditionMenu(condIdx) {
+      context.emit("openConditionMenu", { charIdx: props.i, condIdx });
     }
 
     // define which menu is opened
@@ -222,9 +257,21 @@ export default {
       });
     }
 
+    function changeCondition(payload) {
+      context.emit("changeCondition", {
+        charIdx: props.i,
+        condIdx: payload[0],
+        val: payload[1],
+      });
+    }
+
     // emit charIdx and statIdx to change toggle value
     function toggleStat(statIdx) {
       context.emit("toggleStat", { charIdx: props.i, statIdx });
+    }
+
+    function toggleCondition(condIdx) {
+      context.emit("toggleCondition", { charIdx: props.i, condIdx });
     }
 
     // block menu from repositioning when working with buttons
@@ -265,6 +312,11 @@ export default {
       editStat,
       editName,
       sortCharacter,
+      openConditionMenu,
+      changeCondition,
+      toggleCondition,
+      removeCondition,
+      plusCondition,
     };
   },
 };
