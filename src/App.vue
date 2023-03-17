@@ -341,6 +341,83 @@
       </div>
     </template>
     <!-- end of edit name -->
+    <!-- v-if save-loading modal -->
+    <template v-if="isSaveLoading">
+      <div class="modal__card">
+        <div class="modal__header">
+          <h2>Сохранение и загрузка</h2>
+          <div class="modal__close" @click="closeModal">&#10005;</div>
+        </div>
+        <!-- modal main content -->
+        <div class="modal__content">
+          <!-- input fields -->
+          <div class="modal__values">
+            <div class="modal__value" style="margin-bottom: 0px">
+              <p>Имя:</p>
+              <input
+                class="modal__input"
+                type="text"
+                placeholder="Имя нового сохранения"
+                v-model="modalData.name"
+                @keyup.enter="applyName"
+                @keyup.esc="closeModal"
+              />
+            </div>
+          </div>
+          <!-- end of input -->
+          <div class="modal__btns" style="margin-bottom: 0.6rem">
+            <div class="btn" @click="applyName">Сохранить</div>
+          </div>
+
+          <!-- color picker -->
+          <div class="modal__block">
+            <div class="modal__title">
+              <h4 class="modal__title--text">Доступные сохранения</h4>
+            </div>
+            <div class="modal__saves-list modal__scrollable">
+              <div
+                class="modal__save btn"
+                v-for="(save, idx) in saveNames"
+                :key="idx"
+                :class="[idx === activeSave ? 'active' : '']"
+                @click="activeSave = idx"
+              >
+                <!-- content here -->
+                <div class="modal__save-name">
+                  {{ idx }}.
+                  <p>
+                    {{ save.name }} long long long long long long long long long
+                    long
+                  </p>
+                </div>
+                <div class="modal__save-details">
+                  <div class="modal__save-date">
+                    <div class="modal__save-day-month">
+                      {{ save.day }}.{{ save.month }}
+                    </div>
+                    <div class="modal__save-hours-minutes">
+                      {{ save.hours }}:{{ save.minutes }}
+                    </div>
+                  </div>
+                  <div class="modal__save-id">id:{{ save.id }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- end of color -->
+
+          <!-- btns -->
+          <div class="modal__btns" style="gap: 1.2rem">
+            <div class="btn btn-red" @click="saveToLocalStorage()">
+              Перезаписать
+            </div>
+            <div class="btn btn-red" @click="closeModal">Отмена</div>
+            <div class="btn" @click="loadFromLocalStorage()">Загрузить</div>
+          </div>
+        </div>
+      </div>
+    </template>
+    <!-- end of save-loading modal -->
   </div>
   <!-- modal end -->
   <!-- menu cover -->
@@ -352,33 +429,41 @@
   <!------>
   <header class="header">
     <ul class="header__content">
-      <li
-        class="header__button"
-        id="new-note"
-        @click="addCharacter('Заметка', 'yellow', 'note')"
-      >
-        <i class="fa-sharp fa-regular fa-plus"></i>
-        <i class="fa-regular fa-note-sticky"></i>
-      </li>
-      <li
-        class="header__button"
-        id="new-enemy"
-        @click="addCharacter('Противник', 'red', 'ghost')"
-      >
-        <i class="fa-sharp fa-regular fa-plus"></i>
-        <i class="fa-solid fa-ghost"></i>
-      </li>
-      <li
-        class="header__button"
-        id="new-npc"
-        @click="addCharacter('Персонаж', 'blue', 'user')"
-      >
-        <i class="fa-sharp fa-regular fa-plus"></i>
-        <i class="fa-solid fa-user"></i>
-      </li>
-      <li class="header__button" id="toggle-menu">
-        <i class="fa-regular fa-circle-question"></i>
-      </li>
+      <div class="header__save-load" @click="openSaveModal">
+        <li class="header__button header__save-load">
+          <i class="fa-solid fa-floppy-disk"></i>
+          &nbsp;Save/Load
+        </li>
+      </div>
+      <div class="header__right-btns">
+        <li
+          class="header__button"
+          id="new-note"
+          @click="addCharacter('Заметка', 'yellow', 'note')"
+        >
+          <i class="fa-sharp fa-regular fa-plus"></i>
+          <i class="fa-regular fa-note-sticky"></i>
+        </li>
+        <li
+          class="header__button"
+          id="new-enemy"
+          @click="addCharacter('Противник', 'red', 'ghost')"
+        >
+          <i class="fa-sharp fa-regular fa-plus"></i>
+          <i class="fa-solid fa-ghost"></i>
+        </li>
+        <li
+          class="header__button"
+          id="new-npc"
+          @click="addCharacter('Персонаж', 'blue', 'user')"
+        >
+          <i class="fa-sharp fa-regular fa-plus"></i>
+          <i class="fa-solid fa-user"></i>
+        </li>
+        <li class="header__button" id="toggle-menu">
+          <i class="fa-regular fa-circle-question"></i>
+        </li>
+      </div>
     </ul>
   </header>
   <footer class="footer">
@@ -428,7 +513,7 @@
 
 <script>
 import Character from "./components/Character.vue";
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted } from "vue";
 export default {
   components: { Character },
   setup() {
@@ -785,152 +870,154 @@ export default {
       ],
     });
 
-    const characters = reactive([
-      {
-        name: "Шпингалет",
-        color: "blue",
-        icon: "user",
-        isMenuShown: false,
-        stats: [
-          {
-            name: "",
-            color: "red",
-            icon: "heart",
-            type: "health",
-            current: 84,
-            max: 100,
-            isMenuShown: false,
-          },
-          {
-            name: "DEF",
-            color: "white",
-            icon: "shield-halved",
-            type: "value",
-            current: 1,
-            max: "",
-            isMenuShown: false,
-          },
-          {
-            name: "",
-            color: "blue",
-            icon: "dragon",
-            type: "minmax",
-            current: 1,
-            max: 3,
-            isMenuShown: false,
-          },
-          {
-            name: "Reaction",
-            color: "yellow",
-            icon: "rotate-left",
-            type: "toggle",
-            current: 0,
-            max: "",
-            isMenuShown: false,
-          },
-        ],
-        conditions: [
-          {
-            name: "Слепота",
-            nameEng: "Blinded",
-            color: "white",
-            icon: "eye",
-            type: "toggle",
-            current: 1,
-            max: "",
-            isMenuShown: false,
-          },
-          {
-            name: "Неуклюжесть",
-            nameEng: "Clumsy",
-            color: "white",
-            icon: "shoe-prints",
-            type: "minmax",
-            current: 1,
-            max: 5,
-            isMenuShown: false,
-          },
-        ],
-      },
-      {
-        name: "Красный Барон",
-        color: "red",
-        icon: "ghost",
-        isMenuShown: false,
-        stats: [
-          {
-            name: "",
-            color: "red",
-            icon: "heart",
-            type: "health",
-            current: 103,
-            max: 250,
-            isMenuShown: false,
-          },
-          {
-            name: "DEF",
-            color: "blue",
-            icon: "shield-halved",
-            type: "value",
-            current: 8,
-            max: "",
-            isMenuShown: false,
-          },
-          {
-            name: "DEF",
-            color: "blue",
-            icon: "shield-halved",
-            type: "value",
-            current: 8,
-            max: "",
-            isMenuShown: false,
-          },
-          {
-            name: "Sp.Points",
-            color: "red",
-            icon: "hat-wizard",
-            type: "minmax",
-            current: 2,
-            max: 7,
-            isMenuShown: false,
-          },
-          {
-            name: "Enraged",
-            color: "green",
-            icon: "hand-fist",
-            type: "toggle",
-            current: 1,
-            max: "",
-            isMenuShown: false,
-          },
-        ],
-        conditions: [],
-      },
-      {
-        name: "Заметка",
-        color: "yellow",
-        icon: "note",
-        isMenuShown: false,
-        stats: [
-          {
-            name: "Здания можно возводить лишь на проклятой земле",
-            color: "white",
-            icon: "book",
-            type: "value",
-            current: "",
-            max: "",
-            isMenuShown: false,
-          },
-        ],
-        conditions: [],
-      },
-    ]);
+    let characters = reactive([]);
+    // let characters = reactive([
+    //   {
+    //     name: "Шпингалет",
+    //     color: "blue",
+    //     icon: "user",
+    //     isMenuShown: false,
+    //     stats: [
+    //       {
+    //         name: "",
+    //         color: "red",
+    //         icon: "heart",
+    //         type: "health",
+    //         current: 84,
+    //         max: 100,
+    //         isMenuShown: false,
+    //       },
+    //       {
+    //         name: "DEF",
+    //         color: "white",
+    //         icon: "shield-halved",
+    //         type: "value",
+    //         current: 1,
+    //         max: "",
+    //         isMenuShown: false,
+    //       },
+    //       {
+    //         name: "",
+    //         color: "blue",
+    //         icon: "dragon",
+    //         type: "minmax",
+    //         current: 1,
+    //         max: 3,
+    //         isMenuShown: false,
+    //       },
+    //       {
+    //         name: "Reaction",
+    //         color: "yellow",
+    //         icon: "rotate-left",
+    //         type: "toggle",
+    //         current: 0,
+    //         max: "",
+    //         isMenuShown: false,
+    //       },
+    //     ],
+    //     conditions: [
+    //       {
+    //         name: "Слепота",
+    //         nameEng: "Blinded",
+    //         color: "white",
+    //         icon: "eye",
+    //         type: "toggle",
+    //         current: 1,
+    //         max: "",
+    //         isMenuShown: false,
+    //       },
+    //       {
+    //         name: "Неуклюжесть",
+    //         nameEng: "Clumsy",
+    //         color: "white",
+    //         icon: "shoe-prints",
+    //         type: "minmax",
+    //         current: 1,
+    //         max: 5,
+    //         isMenuShown: false,
+    //       },
+    //     ],
+    //   },
+    //   {
+    //     name: "Красный Барон",
+    //     color: "red",
+    //     icon: "ghost",
+    //     isMenuShown: false,
+    //     stats: [
+    //       {
+    //         name: "",
+    //         color: "red",
+    //         icon: "heart",
+    //         type: "health",
+    //         current: 103,
+    //         max: 250,
+    //         isMenuShown: false,
+    //       },
+    //       {
+    //         name: "DEF",
+    //         color: "blue",
+    //         icon: "shield-halved",
+    //         type: "value",
+    //         current: 8,
+    //         max: "",
+    //         isMenuShown: false,
+    //       },
+    //       {
+    //         name: "DEF",
+    //         color: "blue",
+    //         icon: "shield-halved",
+    //         type: "value",
+    //         current: 8,
+    //         max: "",
+    //         isMenuShown: false,
+    //       },
+    //       {
+    //         name: "Sp.Points",
+    //         color: "red",
+    //         icon: "hat-wizard",
+    //         type: "minmax",
+    //         current: 2,
+    //         max: 7,
+    //         isMenuShown: false,
+    //       },
+    //       {
+    //         name: "Enraged",
+    //         color: "green",
+    //         icon: "hand-fist",
+    //         type: "toggle",
+    //         current: 1,
+    //         max: "",
+    //         isMenuShown: false,
+    //       },
+    //     ],
+    //     conditions: [],
+    //   },
+    //   {
+    //     name: "Заметка",
+    //     color: "yellow",
+    //     icon: "note",
+    //     isMenuShown: false,
+    //     stats: [
+    //       {
+    //         name: "Здания можно возводить лишь на проклятой земле",
+    //         color: "white",
+    //         icon: "book",
+    //         type: "value",
+    //         current: "",
+    //         max: "",
+    //         isMenuShown: false,
+    //       },
+    //     ],
+    //     conditions: [],
+    //   },
+    // ]);
 
     let showModal = ref(false);
     let isStatAdding = ref(false);
     let isStatEditing = ref(false);
     let isNameEditing = ref(false);
     let isConditionAdding = ref(false);
+    let isSaveLoading = ref(false);
 
     // create a new character by clicking on the top right icons
     function addCharacter(name, color, icon) {
@@ -1088,6 +1175,7 @@ export default {
       isStatEditing.value = false;
       isNameEditing.value = false;
       isConditionAdding.value = false;
+      isSaveLoading.value = false;
     }
 
     // we get character index from Character.vue then we remove
@@ -1143,9 +1231,9 @@ export default {
     }
 
     function closeStatMenuByClickOnCover() {
-      console.log(
-        `Меню закрыто на: charIdx:${currentEditable.charIdx}, statIdx:${currentEditable.statIdx}, condIdx:${currentEditable.condIdx}`
-      );
+      // console.log(
+      //   `Меню закрыто на: charIdx:${currentEditable.charIdx}, statIdx:${currentEditable.statIdx}, condIdx:${currentEditable.condIdx}`
+      // );
 
       // check if stats exists, and only then set isMenuShown to false
       if (
@@ -1483,6 +1571,98 @@ export default {
       turnIdx.value = -1;
     }
 
+    // Save/Loading
+    let saveNames = reactive([]);
+    let activeSave = ref(0);
+
+    function openSaveModal() {
+      showModal.value = true;
+      isSaveLoading.value = true;
+      console.log(`save names is:`);
+      console.log(saveNames);
+    }
+
+    onMounted(() => {
+      if (localStorage.key(0).includes("character")) {
+        try {
+          // load first entity
+          let gainedData = JSON.parse(
+            localStorage.getItem(localStorage.key(0))
+          );
+          // let gainedData = JSON.parse(localStorage.getItem("characters"));
+
+          gainedData.forEach((el) => {
+            characters.push(el);
+          });
+        } catch (e) {
+          // localStorage.removeItem("characters");
+          console.log(e);
+        }
+      }
+    });
+
+    function saveToLocalStorage() {
+      const newId = Date.now();
+      console.log(newId);
+      const parsed = JSON.stringify(characters);
+      localStorage.setItem(`characters-${newId}`, parsed);
+    }
+
+    function loadFromLocalStorage() {
+      if (localStorage.getItem("characters")) {
+        try {
+          if (characters) {
+            characters.splice(0, characters.length);
+          }
+          let gainedData = JSON.parse(localStorage.getItem("characters"));
+          console.log(gainedData[0]);
+          gainedData.forEach((el) => {
+            characters.push(el);
+          });
+        } catch (e) {
+          // localStorage.removeItem("characters");
+          console.log(e);
+        }
+      }
+      console.log(characters);
+    }
+
+    function getLocalStorageKeys() {
+      let keys = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        let keyData = {
+          name: "",
+          id: "",
+          day: "",
+          month: "",
+          hours: "",
+          minutes: "",
+        };
+        // console.log(`i is: ${i}`);
+        let fullName = localStorage.key(i);
+        const dashIdx = fullName.lastIndexOf("-");
+
+        keyData.name = fullName.substring(0, dashIdx);
+        keyData.id = fullName.substring(dashIdx + 1);
+
+        const dateFormat = new Date(+keyData.id);
+        keyData.day = getZero(dateFormat.getDate());
+        keyData.month = getZero(dateFormat.getMonth() + 1);
+        keyData.hours = getZero(dateFormat.getHours());
+        keyData.minutes = getZero(dateFormat.getMinutes());
+
+        keys.push(keyData);
+      }
+      console.log(keys);
+      saveNames = keys;
+    }
+
+    getLocalStorageKeys();
+
+    function getZero(val) {
+      return val < 10 ? `0${val}` : +val;
+    }
+
     return {
       characters,
       showModal,
@@ -1493,9 +1673,12 @@ export default {
       isStatEditing,
       isNameEditing,
       isConditionAdding,
+      isSaveLoading,
       modalCalc,
       turnIdx,
       fullTurns,
+      saveNames,
+      activeSave,
       addCharacter,
       addStat,
       plusStat,
@@ -1523,6 +1706,9 @@ export default {
       removeCondition,
       plusCondition,
       addCondition,
+      openSaveModal,
+      saveToLocalStorage,
+      loadFromLocalStorage,
     };
   },
 };

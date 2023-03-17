@@ -61,6 +61,28 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
+/* ===== Scrollbar CSS ===== */
+/* Firefox */
+* {
+  scrollbar-width: none;
+  scrollbar-color: #ffffff #33394d;
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #33394d;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: 3px none #ffffff;
+}
+
 body {
   font-size: 2.2rem;
 }
@@ -130,9 +152,12 @@ h6 {
 }
 .header__content {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   list-style: none;
   margin: 0.3rem 1rem;
+}
+.header__right-btns {
+  display: flex;
   gap: 0.6rem;
 }
 .header__button {
@@ -147,6 +172,10 @@ h6 {
 }
 .header__button:hover {
   background: #1f222e;
+}
+.header__save-load {
+  justify-self: left;
+  color: #fff;
 }
 
 #new-note {
@@ -352,6 +381,45 @@ h6 {
 .modal__condition {
   justify-content: center;
   width: 90%;
+}
+.modal__saves-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  justify-content: left;
+}
+.modal__save {
+  justify-content: left;
+  width: 95%;
+  display: flex;
+  justify-content: space-between;
+}
+.modal__save-name {
+  display: flex;
+}
+.modal__save-name p {
+  display: inline-block;
+}
+.modal__save-name p:first-letter {
+  text-transform: uppercase;
+}
+.modal__save-details {
+  display: flex;
+  flex-direction: column;
+  max-width: 12rem;
+  padding-left: 0.6rem;
+  border-left: 1px solid rgba(153, 153, 153, 0.2);
+}
+.modal__save-date {
+  display: flex;
+  justify-content: right;
+  gap: 0.6rem;
+  font-size: 0.8em;
+}
+.modal__save-id {
+  font-size: 0.55em;
+  opacity: 0.6;
+  text-align: right;
 }
 .modal__btns {
   display: flex;

@@ -157,6 +157,8 @@
 		max-height: 75vh;
 	}
 
+	// conditions
+
 	&__conditions-list {
 		display: flex;
 		flex-wrap: wrap;
@@ -167,6 +169,56 @@
 	&__condition {
 		justify-content: center;
 		width: 90%;
+	}
+
+	// saves list
+	&__saves-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.6rem;
+		justify-content: left;
+	}
+
+	&__save {
+		justify-content: left;
+		width: 95%;
+		display: flex;
+		justify-content: space-between;
+	}
+
+	&__save-name {
+		display: flex;
+	}
+
+	&__save-name p {
+		display: inline-block;
+	}
+
+	&__save-name p:first-letter {
+		text-transform: uppercase;
+	}
+
+	&__save {
+		&-details {
+			display: flex;
+			flex-direction: column;
+			max-width: 12rem;
+			padding-left: 0.6rem;
+			border-left: 1px solid rgba(mix($color-white, $color-black, 60%), 0.2);
+		}
+
+		&-date {
+			display: flex;
+			justify-content: right;
+			gap: 0.6rem;
+			font-size: 0.8em;
+		}
+
+		&-id {
+			font-size: 0.55em;
+			opacity: 0.6;
+			text-align: right;
+		}
 	}
 
 	// bottom btns
