@@ -86,6 +86,16 @@ input::-webkit-inner-spin-button {
 body {
   font-size: 2.2rem;
 }
+@media (max-width: 480px) {
+  body {
+    font-size: 1.9rem;
+  }
+}
+@media (max-width: 430px) {
+  body {
+    font-size: 1.6rem;
+  }
+}
 
 h1,
 h2,
@@ -210,16 +220,13 @@ h6 {
   margin: 0.3rem 1rem;
   gap: 0.6rem;
 }
-.footer__content > div:last-child {
-  width: 7rem;
-}
 .footer__button {
   background: #23262e;
   padding: 0.4rem 0.6rem;
   border-radius: 0.6rem;
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.3rem;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
 }
@@ -281,6 +288,7 @@ h6 {
 }
 .modal__content {
   padding: 0.6rem;
+  margin-top: -1px;
 }
 .modal__types {
   display: flex;
@@ -357,6 +365,9 @@ h6 {
 .modal__block {
   margin-bottom: 1.8rem;
 }
+.modal__block p {
+  margin-bottom: 0.6rem;
+}
 .modal__flex {
   display: flex;
   flex-wrap: wrap;
@@ -424,6 +435,7 @@ h6 {
 .modal__btns {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 3rem;
   padding: 0.6rem 0;
 }
@@ -665,4 +677,29 @@ h6 {
 }
 .conditions__menu {
   font-size: 2.2rem;
+}
+
+.settings__block {
+  margin-top: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.settings__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.settings__values {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+.settings__value {
+  display: flex;
+}
+.settings__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
 }/*# sourceMappingURL=main.css.map */

@@ -7,14 +7,14 @@
       :style="[
         isClickedOnRightHalf ? 'right: 0.3rem' : 'left: 0.2rem',
         isClickedOnBottom
-          ? isRepositionShown
+          ? isRepositionShown || isReactionShown
             ? 'top: -3.3rem; flex-direction: column-reverse;'
             : 'top: -13.3rem; flex-direction: column-reverse;'
           : 'top: 3.3rem',
       ]"
     >
       <!-- position menu -->
-      <template v-if="isRepositionShown">
+      <!-- <template v-if="isRepositionShown">
         <div class="menu__item">
           <div class="menu__counters">
             <div class="menu__counter menu__btn" @click="sortCharacter('top')">
@@ -31,8 +31,29 @@
             </div>
           </div>
         </div>
-      </template>
+      </template> -->
       <!-- end of position menu -->
+
+      <!-- reaction menu -->
+      <template v-if="isReactionShown">
+        <div class="menu__item">
+          <div class="menu__counters">
+            <div class="menu__counter menu__btn" @click="changeReaction(-5)">
+              -5
+            </div>
+            <div class="menu__counter menu__btn" @click="changeReaction(-1)">
+              -1
+            </div>
+            <div class="menu__counter menu__btn" @click="changeReaction(1)">
+              +1
+            </div>
+            <div class="menu__counter menu__btn" @click="changeReaction(5)">
+              +5
+            </div>
+          </div>
+        </div>
+      </template>
+      <!-- end of reaction menu -->
 
       <!-- edit menu -->
       <template v-if="isEditMenuShown">
@@ -66,7 +87,8 @@
     </div>
 
     <div class="person__header">
-      <div
+      <!-- reposition btns -->
+      <!-- <div
         class="person__sort-btn"
         @click="
           openCharMenu('reposition');
@@ -75,6 +97,18 @@
       >
         <i class="fa-solid fa-sort"></i>
         <p class="person__position">{{ positionInArray }}</p>
+      </div> -->
+
+      <!-- reaction btn -->
+      <div
+        class="person__sort-btn"
+        @click="
+          openCharMenu('reaction');
+          getMousePosition($event);
+        "
+      >
+        <i class="fa-solid fa-person-running"></i>
+        <p class="person__position">{{ data.reaction }}</p>
       </div>
       <div class="person__title" :class="`bg-` + data.color">
         <div class="person__name">
@@ -164,6 +198,7 @@ export default {
     "toggleCondition",
     "removeCondition",
     "plusCondition",
+    "changeReaction",
   ],
   setup(props, context) {
     function removeCharacter() {
@@ -202,15 +237,19 @@ export default {
 
     // define which menu is opened
     let isRepositionShown = ref(false);
+    let isReactionShown = ref(false);
     let isEditMenuShown = ref(false);
 
     // open char menu; send index of position
     function openCharMenu(source) {
       isRepositionShown.value = false;
+      isReactionShown.value = false;
       isEditMenuShown.value = false;
 
       if (source === "reposition") {
         isRepositionShown.value = true;
+      } else if (source === "reaction") {
+        isReactionShown.value = true;
       } else {
         isEditMenuShown.value = true;
       }
@@ -294,11 +333,16 @@ export default {
       context.emit("sortCharacter", { charIdx: props.i, val });
     }
 
+    function changeReaction(val) {
+      context.emit("changeReaction", { charIdx: props.i, val });
+    }
+
     return {
       isClickedOnRightHalf,
       isClickedOnBottom,
       positionInArray,
       isRepositionShown,
+      isReactionShown,
       isEditMenuShown,
       removeCharacter,
       removeStat,
@@ -317,6 +361,7 @@ export default {
       toggleCondition,
       removeCondition,
       plusCondition,
+      changeReaction,
     };
   },
 };

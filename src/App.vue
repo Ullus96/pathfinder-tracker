@@ -350,66 +350,68 @@
         </div>
         <!-- modal main content -->
         <div class="modal__content">
-          <!-- input fields -->
-          <div class="modal__values">
-            <div class="modal__value" style="margin-bottom: 0px">
-              <p>Имя:</p>
-              <input
-                class="modal__input"
-                type="text"
-                placeholder="Имя нового сохранения"
-                v-model="modalData.name"
-                @keyup.enter="applyName"
-                @keyup.esc="closeModal"
-              />
+          <template v-if="!isInDevelopment">
+            <!-- input fields -->
+            <div class="modal__values">
+              <div class="modal__value" style="margin-bottom: 0px">
+                <p>Имя:</p>
+                <input
+                  class="modal__input"
+                  type="text"
+                  placeholder="Имя нового сохранения"
+                  v-model="modalData.name"
+                  @keyup.enter="applyName"
+                  @keyup.esc="closeModal"
+                />
+              </div>
             </div>
-          </div>
-          <!-- end of input -->
-          <div class="modal__btns" style="margin-bottom: 0.6rem">
-            <div class="btn" @click="applyName">Сохранить</div>
-          </div>
+            <!-- end of input -->
+            <div class="modal__btns" style="margin-bottom: 0.6rem">
+              <div class="btn" @click="applyName">Сохранить</div>
+            </div>
 
-          <!-- color picker -->
-          <div class="modal__block">
-            <div class="modal__title">
-              <h4 class="modal__title--text">Доступные сохранения</h4>
-            </div>
-            <div class="modal__saves-list modal__scrollable">
-              <div
-                class="modal__save btn"
-                v-for="(save, idx) in saveNames"
-                :key="idx"
-                :class="[idx === activeSave ? 'active' : '']"
-                @click="activeSave = idx"
-              >
-                <!-- content here -->
-                <div class="modal__save-name">
-                  {{ idx }}.
-                  <p>
-                    {{ save.name }} long long long long long long long long long
-                    long
-                  </p>
-                </div>
-                <div class="modal__save-details">
-                  <div class="modal__save-date">
-                    <div class="modal__save-day-month">
-                      {{ save.day }}.{{ save.month }}
-                    </div>
-                    <div class="modal__save-hours-minutes">
-                      {{ save.hours }}:{{ save.minutes }}
-                    </div>
+            <!-- color picker -->
+            <div class="modal__block">
+              <div class="modal__title">
+                <h4 class="modal__title--text">Доступные сохранения</h4>
+              </div>
+              <div class="modal__saves-list modal__scrollable">
+                <div
+                  class="modal__save btn"
+                  v-for="(save, idx) in saveNames"
+                  :key="idx"
+                  :class="[idx === activeSave ? 'active' : '']"
+                  @click="activeSave = idx"
+                >
+                  <!-- content here -->
+                  <div class="modal__save-name">
+                    {{ idx }}.
+                    <p>
+                      {{ save.name }} long long long long long long long long
+                      long long
+                    </p>
                   </div>
-                  <div class="modal__save-id">id:{{ save.id }}</div>
+                  <div class="modal__save-details">
+                    <div class="modal__save-date">
+                      <div class="modal__save-day-month">
+                        {{ save.day }}.{{ save.month }}
+                      </div>
+                      <div class="modal__save-hours-minutes">
+                        {{ save.hours }}:{{ save.minutes }}
+                      </div>
+                    </div>
+                    <div class="modal__save-id">id:{{ save.id }}</div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <!-- end of color -->
+            <!-- end of color -->
+          </template>
 
           <!-- btns -->
           <div class="modal__btns" style="gap: 1.2rem">
             <div class="btn btn-red" @click="saveToLocalStorage()">
-              Перезаписать
+              Сохранить
             </div>
             <div class="btn btn-red" @click="closeModal">Отмена</div>
             <div class="btn" @click="loadFromLocalStorage()">Загрузить</div>
@@ -418,8 +420,80 @@
       </div>
     </template>
     <!-- end of save-loading modal -->
+    <!-- v-if settings -->
+    <template v-if="isSettingsOpen">
+      <div class="modal__card">
+        <div class="modal__header">
+          <h2>Настройки</h2>
+          <div class="modal__close" @click="closeModal">&#10005;</div>
+        </div>
+        <!-- modal main content -->
+        <div class="modal__content">
+          <!-- settings start -->
+          <div class="modal__block settings__block">
+            <!-- font size -->
+            <div class="settings__item">
+              <p>Размер шрифта:</p>
+              <div class="settings__values">
+                <div class="settings__value">
+                  <p>22px</p>
+                </div>
+                <div class="settings__controls">
+                  <div class="btn settings__btn">
+                    <i class="fa-solid fa-minus"></i>
+                  </div>
+                  <div class="btn settings__btn">
+                    <i class="fa-solid fa-plus"></i>
+                  </div>
+                  <div class="btn settings__btn">
+                    <i class="fa-solid fa-rotate-left"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- font size end -->
+
+            <!-- saves -->
+            <!-- vremenno offnuto -->
+            <div class="settings__item" v-if="false">
+              <p>Кол-во сохранений:</p>
+              <div class="settings__values">
+                <div class="settings__value">
+                  <p>3</p>
+                </div>
+                <div class="settings__controls">
+                  <div class="btn settings__btn">Удалить</div>
+                </div>
+              </div>
+            </div>
+            <!-- saves end -->
+          </div>
+          <!-- settings end -->
+
+          <!-- credits; later move to other modal -->
+          <div class="modal__block">
+            <div class="modal__title">
+              <h4 class="modal__title--text"></h4>
+            </div>
+            <p>
+              Оригинальная идея - Pathfinder 2e Combat Tracker от Gamedev Bram
+            </p>
+            <p>https://gamedevbram.itch.io/pathfinder-2e-combat-tracker</p>
+            <p>https://twitter.com/gamedevbram</p>
+          </div>
+          <!-- end of credits -->
+
+          <!-- btns -->
+          <div class="modal__btns">
+            <div class="btn btn-red" @click="closeModal">Закрыть</div>
+          </div>
+        </div>
+      </div>
+    </template>
+    <!-- end of add stat -->
   </div>
   <!-- modal end -->
+
   <!-- menu cover -->
   <div
     class="menu__cover"
@@ -460,8 +534,8 @@
           <i class="fa-sharp fa-regular fa-plus"></i>
           <i class="fa-solid fa-user"></i>
         </li>
-        <li class="header__button" id="toggle-menu">
-          <i class="fa-regular fa-circle-question"></i>
+        <li class="header__button" id="toggle-menu" @click="openSettingsModal">
+          <i class="fa-solid fa-gear"></i>
         </li>
       </div>
     </ul>
@@ -480,7 +554,16 @@
           <i class="fa-solid fa-angle-right"></i>
         </div>
       </div>
-      <div></div>
+      <div>
+        <div
+          class="footer__button"
+          :class="[isSortingByReactionActive ? 'text-green' : '']"
+          @click="sortCharacters()"
+        >
+          <i class="fa-solid fa-person-running"></i>
+          <i class="fa-solid fa-arrow-down-wide-short"></i>
+        </div>
+      </div>
     </div>
   </footer>
   <section class="content">
@@ -507,6 +590,7 @@
       @toggleCondition="toggleCondition"
       @removeCondition="removeCondition"
       @plusCondition="plusCondition"
+      @changeReaction="changeReaction"
     ></character>
   </section>
 </template>
@@ -1018,6 +1102,7 @@ export default {
     let isNameEditing = ref(false);
     let isConditionAdding = ref(false);
     let isSaveLoading = ref(false);
+    let isSettingsOpen = ref(false);
 
     // create a new character by clicking on the top right icons
     function addCharacter(name, color, icon) {
@@ -1025,12 +1110,19 @@ export default {
         name: name,
         color: color,
         icon: icon,
+        reaction: 0,
+        id: Date.now(),
         isMenuShown: false,
         stats: [],
         conditions: [],
       };
       // add generated character to array of characters
       characters.push(generatedCharacter);
+
+      // if sorted by reaction, sort an new array
+      if (isSortingByReactionActive.value) {
+        sortByReaction();
+      }
     }
 
     // create temporary variables that used to identify current editable position
@@ -1176,6 +1268,7 @@ export default {
       isNameEditing.value = false;
       isConditionAdding.value = false;
       isSaveLoading.value = false;
+      isSettingsOpen.value = false;
     }
 
     // we get character index from Character.vue then we remove
@@ -1237,7 +1330,7 @@ export default {
 
       // check if stats exists, and only then set isMenuShown to false
       if (
-        characters[currentEditable.charIdx].stats.length > 0 &&
+        characters[currentEditable.charIdx]?.stats.length > 0 &&
         typeof characters[currentEditable.charIdx].stats[
           currentEditable.statIdx
         ] !== "undefined"
@@ -1250,7 +1343,7 @@ export default {
 
       // check if conditions exists
       if (
-        characters[currentEditable.charIdx].conditions.length > 0 &&
+        characters[currentEditable.charIdx]?.conditions.length > 0 &&
         typeof characters[currentEditable.charIdx].conditions[
           currentEditable.condIdx
         ] !== "undefined"
@@ -1261,7 +1354,9 @@ export default {
         // console.log(`condIdx is not undefined`);
       }
 
-      characters[currentEditable.charIdx].isMenuShown = false;
+      if (characters && characters.length) {
+        characters[currentEditable.charIdx].isMenuShown = false;
+      }
 
       closeMenu();
     }
@@ -1511,6 +1606,7 @@ export default {
     }
 
     // sort character's position
+    // not in use anymore
     function sortCharacter(payload) {
       setPointers(payload.charIdx);
       const editableChar = characters[currentEditable.charIdx];
@@ -1539,6 +1635,34 @@ export default {
       characters.splice(editableIdx, 1);
       // paste at target index with 0 deleted elements relocated character
       characters.splice(targetIdx, 0, editableChar);
+    }
+
+    // Reaction
+    let isSortingByReactionActive = ref(false);
+
+    function changeReaction(payload) {
+      setPointers(payload.charIdx);
+      const editableChar = characters[currentEditable.charIdx];
+      editableChar.reaction += payload.val;
+    }
+
+    function sortByReaction() {
+      characters = characters.sort((a, b) => b.reaction - a.reaction);
+    }
+
+    function sortById() {
+      characters = characters.sort((a, b) => a.id - b.id);
+    }
+
+    function sortCharacters() {
+      console.log(`isSortingByReactionActive: ${isSortingByReactionActive}`);
+      if (isSortingByReactionActive.value) {
+        sortById();
+        isSortingByReactionActive.value = false;
+      } else {
+        sortByReaction();
+        isSortingByReactionActive.value = true;
+      }
     }
 
     // Turn counter
@@ -1578,16 +1702,16 @@ export default {
     function openSaveModal() {
       showModal.value = true;
       isSaveLoading.value = true;
-      console.log(`save names is:`);
-      console.log(saveNames);
+      // console.log(`save names is:`);
+      // console.log(saveNames);
     }
 
     onMounted(() => {
-      if (localStorage.key(0).includes("character")) {
+      if (localStorage.key(0)) {
         try {
           // load first entity
           let gainedData = JSON.parse(
-            localStorage.getItem(localStorage.key(0))
+            localStorage.getItem(localStorage.key(1))
           );
           // let gainedData = JSON.parse(localStorage.getItem("characters"));
 
@@ -1602,10 +1726,14 @@ export default {
     });
 
     function saveToLocalStorage() {
-      const newId = Date.now();
-      console.log(newId);
       const parsed = JSON.stringify(characters);
-      localStorage.setItem(`characters-${newId}`, parsed);
+      localStorage.setItem(`characters`, parsed);
+      closeModal();
+      // new way
+      // const newId = Date.now();
+      // console.log(newId);
+      // const parsed = JSON.stringify(characters);
+      // localStorage.setItem(`characters-${newId}`, parsed);
     }
 
     function loadFromLocalStorage() {
@@ -1615,7 +1743,7 @@ export default {
             characters.splice(0, characters.length);
           }
           let gainedData = JSON.parse(localStorage.getItem("characters"));
-          console.log(gainedData[0]);
+          console.log(gainedData);
           gainedData.forEach((el) => {
             characters.push(el);
           });
@@ -1624,44 +1752,58 @@ export default {
           console.log(e);
         }
       }
-      console.log(characters);
+      closeModal();
+      // console.log(characters);
     }
 
-    function getLocalStorageKeys() {
-      let keys = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        let keyData = {
-          name: "",
-          id: "",
-          day: "",
-          month: "",
-          hours: "",
-          minutes: "",
-        };
-        // console.log(`i is: ${i}`);
-        let fullName = localStorage.key(i);
-        const dashIdx = fullName.lastIndexOf("-");
+    // function getLocalStorageKeys() {
+    //   let keys = [];
+    //   for (let i = 0; i < localStorage.length; i++) {
+    //     let keyData = {
+    //       name: "",
+    //       id: "",
+    //       day: "",
+    //       month: "",
+    //       hours: "",
+    //       minutes: "",
+    //     };
+    //     // console.log(`i is: ${i}`);
+    //     let fullName = localStorage.key(i);
+    //     const dashIdx = fullName.lastIndexOf("-");
 
-        keyData.name = fullName.substring(0, dashIdx);
-        keyData.id = fullName.substring(dashIdx + 1);
+    //     keyData.name = fullName.substring(0, dashIdx);
+    //     keyData.id = fullName.substring(dashIdx + 1);
 
-        const dateFormat = new Date(+keyData.id);
-        keyData.day = getZero(dateFormat.getDate());
-        keyData.month = getZero(dateFormat.getMonth() + 1);
-        keyData.hours = getZero(dateFormat.getHours());
-        keyData.minutes = getZero(dateFormat.getMinutes());
+    //     const dateFormat = new Date(+keyData.id);
+    //     keyData.day = getZero(dateFormat.getDate());
+    //     keyData.month = getZero(dateFormat.getMonth() + 1);
+    //     keyData.hours = getZero(dateFormat.getHours());
+    //     keyData.minutes = getZero(dateFormat.getMinutes());
 
-        keys.push(keyData);
-      }
-      console.log(keys);
-      saveNames = keys;
+    //     keys.push(keyData);
+    //   }
+    //   console.log(keys);
+    //   saveNames = keys;
+    // }
+
+    // getLocalStorageKeys();
+
+    // function getZero(val) {
+    //   return val < 10 ? `0${val}` : +val;
+    // }
+
+    function openSettingsModal() {
+      showModal.value = true;
+      isSettingsOpen.value = true;
     }
 
-    getLocalStorageKeys();
-
-    function getZero(val) {
-      return val < 10 ? `0${val}` : +val;
+    function setFontSize(val) {
+      document.body.style.fontSize = `${val}rem`;
+      localStorage.setItem(`fontSize`, val);
     }
+    // setFontSize(2.2);
+
+    const isInDevelopment = ref(true);
 
     return {
       characters,
@@ -1674,9 +1816,12 @@ export default {
       isNameEditing,
       isConditionAdding,
       isSaveLoading,
+      isInDevelopment,
+      isSettingsOpen,
       modalCalc,
       turnIdx,
       fullTurns,
+      isSortingByReactionActive,
       saveNames,
       activeSave,
       addCharacter,
@@ -1700,6 +1845,9 @@ export default {
       sortCharacter,
       makeTurn,
       resetTurns,
+      sortById,
+      sortByReaction,
+      sortCharacters,
       openConditionMenu,
       changeCondition,
       toggleCondition,
@@ -1709,6 +1857,8 @@ export default {
       openSaveModal,
       saveToLocalStorage,
       loadFromLocalStorage,
+      openSettingsModal,
+      changeReaction,
     };
   },
 };

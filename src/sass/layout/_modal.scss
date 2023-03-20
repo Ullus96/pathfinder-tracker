@@ -43,6 +43,7 @@
 
 	&__content {
 		padding: 0.6rem;
+		margin-top: -1px;
 	}
 
 	// types
@@ -137,6 +138,10 @@
 	// block, flex and items
 	&__block {
 		margin-bottom: 1.8rem;
+
+		& p {
+			margin-bottom: 0.6rem;
+		}
 	}
 
 	&__flex {
@@ -225,6 +230,7 @@
 	&__btns {
 		display: flex;
 		justify-content: center;
+		flex-wrap: wrap;
 		gap: 3rem;
 		padding: 0.6rem 0;
 	}
