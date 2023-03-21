@@ -188,18 +188,6 @@ h6 {
   color: #fff;
 }
 
-#new-note {
-  color: #d9b741;
-}
-
-#new-enemy {
-  color: #d85252;
-}
-
-#new-npc {
-  color: #7ab7e7;
-}
-
 #toggle-menu {
   color: #fff;
 }
@@ -464,6 +452,10 @@ h6 {
 .modal__small-placeholder::placeholder {
   font-size: 0.6em;
   vertical-align: middle;
+}
+.modal__group-names {
+  margin-bottom: 1.5rem;
+  text-align: center;
 }
 
 .person {

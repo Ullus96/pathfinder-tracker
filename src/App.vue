@@ -420,15 +420,56 @@
           <!-- end of saves list -->
 
           <!-- btns -->
-          <div class="modal__btns" style="gap: 1.2rem">
+          <div class="modal__btns">
             <div class="btn btn-red" @click="rewriteSave()">Перезаписать</div>
-            <div class="btn btn-red" @click="closeModal()">Отмена</div>
             <div class="btn" @click="loadFromLocalStorage()">Загрузить</div>
           </div>
         </div>
       </div>
     </template>
     <!-- end of save-loading modal -->
+    <!-- v-if save-load group -->
+    <template v-if="isGroupAdding">
+      <div class="modal__card">
+        <div class="modal__header">
+          <h2>Добавление игровой группы</h2>
+          <div class="modal__close" @click="closeModal">&#10005;</div>
+        </div>
+        <!-- modal main content -->
+        <div class="modal__content">
+          <!-- group names -->
+          <div class="modal__title">
+            <h4 class="modal__title--text">Текущая группа:</h4>
+          </div>
+          <p class="modal__group-names">
+            <template v-if="groupData">
+              <template v-for="(char, i) in groupData" :key="i">
+                {{
+                  i === groupData.length - 1 ? `${char.name}` : `${char.name}, `
+                }}</template
+              ></template
+            >
+            <template v-else>В вашей группе пока нет членов</template>
+          </p>
+          <!-- end of names -->
+
+          <!-- btns -->
+          <div class="modal__btns">
+            <div
+              class="btn"
+              :class="[groupData ? 'btn-red' : '']"
+              @click="saveGroup()"
+            >
+              {{ groupData ? `Перезаписать` : `Сохранить` }}
+            </div>
+            <div class="btn" @click="loadGroup()" v-if="groupData">
+              Добавить на поле
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+    <!-- end of save-loading group -->
     <!-- v-if settings -->
     <template v-if="isSettingsOpen">
       <div class="modal__card">
@@ -472,6 +513,32 @@
               <div class="settings__values">
                 <div class="settings__controls">
                   <div class="btn settings__btn" @click="clearLocalStorage()">
+                    Удалить
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="settings__item">
+              <p>Удалить только сохранения:</p>
+              <div class="settings__values">
+                <div class="settings__controls">
+                  <div
+                    class="btn settings__btn"
+                    @click="clearSavesFromLocalStorage()"
+                  >
+                    Удалить
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="settings__item">
+              <p>Удалить группу:</p>
+              <div class="settings__values">
+                <div class="settings__controls">
+                  <div
+                    class="btn settings__btn"
+                    @click="clearGroupFromLocalStorage()"
+                  >
                     Удалить
                   </div>
                 </div>
@@ -521,31 +588,32 @@
         </li>
       </div>
       <div class="header__right-btns">
+        <li class="header__button text-blue" @click="openGroupModal">
+          <i class="fa-sharp fa-regular fa-plus"></i>
+          <i class="fa-solid fa-user-group"></i>
+        </li>
         <li
-          class="header__button"
-          id="new-note"
+          class="header__button text-yellow"
           @click="addCharacter('Заметка', 'yellow', 'note')"
         >
           <i class="fa-sharp fa-regular fa-plus"></i>
           <i class="fa-regular fa-note-sticky"></i>
         </li>
         <li
-          class="header__button"
-          id="new-enemy"
+          class="header__button text-red"
           @click="addCharacter('Противник', 'red', 'ghost')"
         >
           <i class="fa-sharp fa-regular fa-plus"></i>
           <i class="fa-solid fa-ghost"></i>
         </li>
         <li
-          class="header__button"
-          id="new-npc"
+          class="header__button text-blue"
           @click="addCharacter('Персонаж', 'blue', 'user')"
         >
           <i class="fa-sharp fa-regular fa-plus"></i>
           <i class="fa-solid fa-user"></i>
         </li>
-        <li class="header__button" id="toggle-menu" @click="openSettingsModal">
+        <li class="header__button text-white" @click="openSettingsModal">
           <i class="fa-solid fa-gear"></i>
         </li>
       </div>
@@ -1113,6 +1181,7 @@ export default {
     let isNameEditing = ref(false);
     let isConditionAdding = ref(false);
     let isSaveLoading = ref(false);
+    let isGroupAdding = ref(false);
     let isSettingsOpen = ref(false);
 
     // create a new character by clicking on the top right icons
@@ -1280,6 +1349,7 @@ export default {
       isNameEditing.value = false;
       isConditionAdding.value = false;
       isSaveLoading.value = false;
+      isGroupAdding.value = false;
       isSettingsOpen.value = false;
     }
 
@@ -1709,9 +1779,9 @@ export default {
     // Save/Loading
     let saveNames = reactive([]); // data to render saves list
     let activeSave = ref(0); // what save is active on modal
-    // TODO: load value from localStorage
     let mainSave = ref(0); // set save as main to load on start
     let newSaveName = ref("");
+    let groupData = reactive(["smth"]);
 
     function openSaveModal() {
       showModal.value = true;
@@ -1727,7 +1797,7 @@ export default {
     }
 
     onMounted(() => {
-      if (localStorage.key(0)) {
+      if (localStorage.getItem("saves")) {
         try {
           // load first entity
           let gainedData = JSON.parse(localStorage.getItem("saves"));
@@ -1758,6 +1828,15 @@ export default {
           console.log(e);
         }
       }
+
+      // if (localStorage.getItem("group")) {
+      //   try {
+      //     groupData = JSON.parse(localStorage.getItem("group"));
+      //     console.log(groupData);
+      //   } catch (e) {
+      //     console.log(e);
+      //   }
+      // }
     });
 
     // Create a new save to a localStorage from scratch
@@ -1780,6 +1859,20 @@ export default {
       } else {
         generatedSave.name = "Сохранение";
       }
+
+      // IDK why this isn't working
+      // const dateFormat = new Date(generatedSave.id);
+      // let keyData = {
+      //   name: generatedSave.name,
+      //   isMainSave: generatedSave.isMainSave,
+      //   id: generatedSave.id,
+      //   day: getZero(dateFormat.getDate()),
+      //   month: getZero(dateFormat.getMonth() + 1),
+      //   hours: getZero(dateFormat.getHours()),
+      //   minutes: getZero(dateFormat.getMinutes()),
+      // };
+
+      // saveNames.push(keyData);
 
       // add to array of all saves a new generated save
       storedData.push(generatedSave);
@@ -1888,6 +1981,31 @@ export default {
       saveNames.splice(idx, 1);
     }
 
+    // GROUPS
+    groupData = JSON.parse(localStorage.getItem("group"));
+
+    function openGroupModal() {
+      showModal.value = true;
+      isGroupAdding.value = true;
+    }
+
+    function saveGroup() {
+      if (characters && characters.length > 0) {
+        const parsed = JSON.stringify(characters);
+        localStorage.setItem("group", parsed);
+      } else {
+        localStorage.removeItem("group");
+      }
+      closeModal();
+    }
+
+    function loadGroup() {
+      groupData.forEach((el) => {
+        characters.push(el);
+      });
+      closeModal();
+    }
+
     // settings
     function openSettingsModal() {
       showModal.value = true;
@@ -1899,6 +2017,14 @@ export default {
       localStorage.setItem(`fontSize`, val);
     }
     // setFontSize(2.2);
+
+    function clearSavesFromLocalStorage() {
+      localStorage.removeItem("saves");
+    }
+
+    function clearGroupFromLocalStorage() {
+      localStorage.removeItem("group");
+    }
 
     // debugging
     const hideFromProduction = ref(false);
@@ -1921,6 +2047,7 @@ export default {
       isNameEditing,
       isConditionAdding,
       isSaveLoading,
+      isGroupAdding,
       hideFromProduction,
       isSettingsOpen,
       modalCalc,
@@ -1930,6 +2057,7 @@ export default {
       saveNames,
       activeSave,
       newSaveName,
+      groupData,
       addCharacter,
       addStat,
       plusStat,
@@ -1967,8 +2095,13 @@ export default {
       setMainSave,
       loadFromLocalStorage,
       deleteSave,
+      openGroupModal,
+      saveGroup,
+      loadGroup,
       openSettingsModal,
       changeReaction,
+      clearSavesFromLocalStorage,
+      clearGroupFromLocalStorage,
     };
   },
 };
