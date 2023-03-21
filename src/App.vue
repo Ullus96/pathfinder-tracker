@@ -350,70 +350,79 @@
         </div>
         <!-- modal main content -->
         <div class="modal__content">
-          <template v-if="!isInDevelopment">
-            <!-- input fields -->
-            <div class="modal__values">
-              <div class="modal__value" style="margin-bottom: 0px">
-                <p>Имя:</p>
-                <input
-                  class="modal__input"
-                  type="text"
-                  placeholder="Имя нового сохранения"
-                  v-model="modalData.name"
-                  @keyup.enter="applyName"
-                  @keyup.esc="closeModal"
-                />
-              </div>
+          <!-- input fields -->
+          <div class="modal__values">
+            <div class="modal__value" style="margin-bottom: 0px">
+              <p>Имя:</p>
+              <input
+                class="modal__input"
+                type="text"
+                placeholder="Имя нового сохранения"
+                v-model="newSaveName"
+                @keyup.enter="addNewSaveToLocalStorage()"
+                @keyup.esc="closeModal"
+              />
             </div>
-            <!-- end of input -->
-            <div class="modal__btns" style="margin-bottom: 0.6rem">
-              <div class="btn" @click="applyName">Сохранить</div>
-            </div>
+          </div>
+          <!-- end of input -->
+          <div class="modal__btns" style="margin-bottom: 0.6rem">
+            <div class="btn" @click="addNewSaveToLocalStorage()">Сохранить</div>
+          </div>
 
-            <!-- color picker -->
-            <div class="modal__block">
-              <div class="modal__title">
-                <h4 class="modal__title--text">Доступные сохранения</h4>
-              </div>
-              <div class="modal__saves-list modal__scrollable">
-                <div
-                  class="modal__save btn"
-                  v-for="(save, idx) in saveNames"
-                  :key="idx"
-                  :class="[idx === activeSave ? 'active' : '']"
-                  @click="activeSave = idx"
-                >
-                  <!-- content here -->
-                  <div class="modal__save-name">
-                    {{ idx }}.
-                    <p>
-                      {{ save.name }} long long long long long long long long
-                      long long
-                    </p>
+          <!-- available saves list -->
+          <div class="modal__block">
+            <div class="modal__title">
+              <h4 class="modal__title--text">Доступные сохранения</h4>
+            </div>
+            <div class="modal__saves-list modal__scrollable">
+              <div
+                class="modal__save btn"
+                v-for="(save, idx) in saveNames"
+                :key="save.id"
+                :class="[idx === activeSave ? 'active' : '']"
+                @click="activeSave = idx"
+              >
+                <!-- content here -->
+                <div class="modal__save-name">
+                  <div @click.stop="setMainSave(idx)">
+                    <i
+                      class="fa-solid fa-star text-yellow modal__save-favourite"
+                      v-if="save.isMainSave"
+                    ></i>
+                    <i
+                      class="fa-regular fa-star modal__save-not-accented-icon"
+                      v-else
+                    ></i>
                   </div>
+                  <p>
+                    {{ save.name }}
+                  </p>
+                </div>
+                <div class="modal__save-right-side">
                   <div class="modal__save-details">
                     <div class="modal__save-date">
-                      <div class="modal__save-day-month">
-                        {{ save.day }}.{{ save.month }}
-                      </div>
-                      <div class="modal__save-hours-minutes">
-                        {{ save.hours }}:{{ save.minutes }}
-                      </div>
+                      {{ save.hours }}:{{ save.minutes }}
                     </div>
-                    <div class="modal__save-id">id:{{ save.id }}</div>
+                    <div class="modal__save-date modal__save-day">
+                      {{ save.day }}.{{ save.month }}
+                    </div>
+                  </div>
+                  <div
+                    class="modal__save-delete modal__save-not-accented-icon"
+                    @click.stop="deleteSave(idx)"
+                  >
+                    <i class="fa-solid fa-trash-can"></i>
                   </div>
                 </div>
               </div>
             </div>
-            <!-- end of color -->
-          </template>
+          </div>
+          <!-- end of saves list -->
 
           <!-- btns -->
           <div class="modal__btns" style="gap: 1.2rem">
-            <div class="btn btn-red" @click="saveToLocalStorage()">
-              Сохранить
-            </div>
-            <div class="btn btn-red" @click="closeModal">Отмена</div>
+            <div class="btn btn-red" @click="rewriteSave()">Перезаписать</div>
+            <div class="btn btn-red" @click="closeModal()">Отмена</div>
             <div class="btn" @click="loadFromLocalStorage()">Загрузить</div>
           </div>
         </div>
@@ -432,7 +441,7 @@
           <!-- settings start -->
           <div class="modal__block settings__block">
             <!-- font size -->
-            <div class="settings__item">
+            <div class="settings__item" v-if="hideFromProduction">
               <p>Размер шрифта:</p>
               <div class="settings__values">
                 <div class="settings__value">
@@ -455,14 +464,16 @@
 
             <!-- saves -->
             <!-- vremenno offnuto -->
-            <div class="settings__item" v-if="false">
-              <p>Кол-во сохранений:</p>
+            <div class="modal__title">
+              <h4 class="modal__title--text">Отладка</h4>
+            </div>
+            <div class="settings__item">
+              <p>Удалить настройки и сохранения:</p>
               <div class="settings__values">
-                <div class="settings__value">
-                  <p>3</p>
-                </div>
                 <div class="settings__controls">
-                  <div class="btn settings__btn">Удалить</div>
+                  <div class="btn settings__btn" @click="clearLocalStorage()">
+                    Удалить
+                  </div>
                 </div>
               </div>
             </div>
@@ -471,7 +482,7 @@
           <!-- settings end -->
 
           <!-- credits; later move to other modal -->
-          <div class="modal__block">
+          <div class="modal__block" v-if="hideFromProduction">
             <div class="modal__title">
               <h4 class="modal__title--text"></h4>
             </div>
@@ -1256,6 +1267,7 @@ export default {
       modalData.activeColor = 0;
       wasSetToToggle = false;
       modalCalc.value = "";
+      activeSave.value = 0;
     }
 
     // close modal window
@@ -1655,7 +1667,6 @@ export default {
     }
 
     function sortCharacters() {
-      console.log(`isSortingByReactionActive: ${isSortingByReactionActive}`);
       if (isSortingByReactionActive.value) {
         sortById();
         isSortingByReactionActive.value = false;
@@ -1687,7 +1698,7 @@ export default {
         turnIdx.value = -1;
       }
 
-      console.log(turnIdx.value);
+      // console.log(turnIdx.value);
     }
 
     function resetTurns() {
@@ -1696,28 +1707,52 @@ export default {
     }
 
     // Save/Loading
-    let saveNames = reactive([]);
-    let activeSave = ref(0);
+    let saveNames = reactive([]); // data to render saves list
+    let activeSave = ref(0); // what save is active on modal
+    // TODO: load value from localStorage
+    let mainSave = ref(0); // set save as main to load on start
+    let newSaveName = ref("");
 
     function openSaveModal() {
       showModal.value = true;
       isSaveLoading.value = true;
+      getLocalStorageInfo();
+
       // console.log(`save names is:`);
       // console.log(saveNames);
+    }
+
+    function clearLocalStorage() {
+      localStorage.clear();
     }
 
     onMounted(() => {
       if (localStorage.key(0)) {
         try {
           // load first entity
-          let gainedData = JSON.parse(
-            localStorage.getItem(localStorage.key(1))
-          );
-          // let gainedData = JSON.parse(localStorage.getItem("characters"));
+          let gainedData = JSON.parse(localStorage.getItem("saves"));
 
-          gainedData.forEach((el) => {
-            characters.push(el);
+          // gain position of main save
+          gainedData.forEach((el, i) => {
+            if (el.isMainSave) {
+              mainSave.value = i;
+            }
           });
+
+          // load mainSave
+          if (
+            gainedData &&
+            gainedData.length > 0 &&
+            mainSave.value < gainedData.length
+          ) {
+            gainedData[mainSave.value].saveData.forEach((el) => {
+              characters.push(el);
+            });
+          } else {
+            gainedData[0].saveData.forEach((el) => {
+              characters.push(el);
+            });
+          }
         } catch (e) {
           // localStorage.removeItem("characters");
           console.log(e);
@@ -1725,27 +1760,85 @@ export default {
       }
     });
 
-    function saveToLocalStorage() {
-      const parsed = JSON.stringify(characters);
-      localStorage.setItem(`characters`, parsed);
+    // Create a new save to a localStorage from scratch
+    function addNewSaveToLocalStorage() {
+      let storedData = [];
+      if (localStorage.getItem("saves")) {
+        storedData = JSON.parse(localStorage.getItem("saves"));
+      }
+
+      let generatedSave = {
+        id: Date.now(),
+        saveTime: Date.now(),
+        name: "",
+        saveData: characters,
+        isMainSave: false,
+      };
+
+      if (newSaveName.value) {
+        generatedSave.name = newSaveName.value;
+      } else {
+        generatedSave.name = "Сохранение";
+      }
+
+      // add to array of all saves a new generated save
+      storedData.push(generatedSave);
+      const parsed = JSON.stringify(storedData);
+      localStorage.setItem("saves", parsed);
+
+      newSaveName.value = "";
       closeModal();
-      // new way
-      // const newId = Date.now();
-      // console.log(newId);
-      // const parsed = JSON.stringify(characters);
-      // localStorage.setItem(`characters-${newId}`, parsed);
     }
 
+    function rewriteSave() {
+      let storedData = JSON.parse(localStorage.getItem("saves"));
+
+      // find save in array of saves and change saveTime and saveData
+      storedData.forEach((el) => {
+        if (el.id === saveNames[activeSave.value].id) {
+          el.saveTime = Date.now();
+          el.saveData = characters;
+        }
+      });
+
+      // save a rewrited save (and all others) to a localStorage
+      const parsed = JSON.stringify(storedData);
+      localStorage.setItem("saves", parsed);
+      closeModal();
+    }
+
+    function setMainSave(idx) {
+      let storedData = JSON.parse(localStorage.getItem("saves"));
+
+      storedData.forEach((el) => {
+        el.isMainSave = false;
+        if (el.id === saveNames[idx].id) {
+          el.isMainSave = true;
+        }
+      });
+
+      // save a rewrited save (and all others) to a localStorage
+      const parsed = JSON.stringify(storedData);
+      localStorage.setItem("saves", parsed);
+      closeModal();
+    }
+
+    // load a save from a save list (by comparing by id)
     function loadFromLocalStorage() {
-      if (localStorage.getItem("characters")) {
+      if (localStorage.getItem("saves")) {
         try {
           if (characters) {
             characters.splice(0, characters.length);
           }
-          let gainedData = JSON.parse(localStorage.getItem("characters"));
-          console.log(gainedData);
+          let gainedData = JSON.parse(localStorage.getItem("saves"));
+
           gainedData.forEach((el) => {
-            characters.push(el);
+            // console.log(saveNames[activeSave.value]);
+            if (el.id === saveNames[activeSave.value].id) {
+              el.saveData.forEach((char) => {
+                characters.push(char);
+              });
+            }
           });
         } catch (e) {
           // localStorage.removeItem("characters");
@@ -1753,45 +1846,49 @@ export default {
         }
       }
       closeModal();
-      // console.log(characters);
     }
 
-    // function getLocalStorageKeys() {
-    //   let keys = [];
-    //   for (let i = 0; i < localStorage.length; i++) {
-    //     let keyData = {
-    //       name: "",
-    //       id: "",
-    //       day: "",
-    //       month: "",
-    //       hours: "",
-    //       minutes: "",
-    //     };
-    //     // console.log(`i is: ${i}`);
-    //     let fullName = localStorage.key(i);
-    //     const dashIdx = fullName.lastIndexOf("-");
+    // AFAIK, localStorage is not reactive, so we get all render data on first load of page
+    function getLocalStorageInfo() {
+      saveNames = [];
+      const gainedData = JSON.parse(localStorage.getItem("saves"));
 
-    //     keyData.name = fullName.substring(0, dashIdx);
-    //     keyData.id = fullName.substring(dashIdx + 1);
+      gainedData?.forEach((el) => {
+        const dateFormat = new Date(el.saveTime);
+        let keyData = {
+          name: el.name,
+          isMainSave: el.isMainSave,
+          id: el.id,
+          day: getZero(dateFormat.getDate()),
+          month: getZero(dateFormat.getMonth() + 1),
+          hours: getZero(dateFormat.getHours()),
+          minutes: getZero(dateFormat.getMinutes()),
+        };
 
-    //     const dateFormat = new Date(+keyData.id);
-    //     keyData.day = getZero(dateFormat.getDate());
-    //     keyData.month = getZero(dateFormat.getMonth() + 1);
-    //     keyData.hours = getZero(dateFormat.getHours());
-    //     keyData.minutes = getZero(dateFormat.getMinutes());
+        saveNames.push(keyData);
+      });
+    }
 
-    //     keys.push(keyData);
-    //   }
-    //   console.log(keys);
-    //   saveNames = keys;
-    // }
+    getLocalStorageInfo();
 
-    // getLocalStorageKeys();
+    function getZero(val) {
+      return val < 10 ? `0${val}` : +val;
+    }
 
-    // function getZero(val) {
-    //   return val < 10 ? `0${val}` : +val;
-    // }
+    // delete save
+    function deleteSave(idx) {
+      const saveToDelete = saveNames[idx];
+      console.log(saveToDelete);
 
+      const gainedData = JSON.parse(localStorage.getItem("saves"));
+      const newSaveData = gainedData.filter((el) => el.id !== saveToDelete.id);
+
+      const parsed = JSON.stringify(newSaveData);
+      localStorage.setItem("saves", parsed);
+      saveNames.splice(idx, 1);
+    }
+
+    // settings
     function openSettingsModal() {
       showModal.value = true;
       isSettingsOpen.value = true;
@@ -1803,7 +1900,15 @@ export default {
     }
     // setFontSize(2.2);
 
-    const isInDevelopment = ref(true);
+    // debugging
+    const hideFromProduction = ref(false);
+    // console.log(localStorage);
+
+    function test() {
+      let test = JSON.parse(localStorage.getItem("saves"));
+      return test[0];
+    }
+    // console.log(test());
 
     return {
       characters,
@@ -1816,7 +1921,7 @@ export default {
       isNameEditing,
       isConditionAdding,
       isSaveLoading,
-      isInDevelopment,
+      hideFromProduction,
       isSettingsOpen,
       modalCalc,
       turnIdx,
@@ -1824,6 +1929,7 @@ export default {
       isSortingByReactionActive,
       saveNames,
       activeSave,
+      newSaveName,
       addCharacter,
       addStat,
       plusStat,
@@ -1855,8 +1961,12 @@ export default {
       plusCondition,
       addCondition,
       openSaveModal,
-      saveToLocalStorage,
+      clearLocalStorage,
+      addNewSaveToLocalStorage,
+      rewriteSave,
+      setMainSave,
       loadFromLocalStorage,
+      deleteSave,
       openSettingsModal,
       changeReaction,
     };

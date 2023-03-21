@@ -365,9 +365,6 @@ h6 {
 .modal__block {
   margin-bottom: 1.8rem;
 }
-.modal__block p {
-  margin-bottom: 0.6rem;
-}
 .modal__flex {
   display: flex;
   flex-wrap: wrap;
@@ -407,6 +404,8 @@ h6 {
 }
 .modal__save-name {
   display: flex;
+  align-items: center;
+  gap: 0.9rem;
 }
 .modal__save-name p {
   display: inline-block;
@@ -414,23 +413,35 @@ h6 {
 .modal__save-name p:first-letter {
   text-transform: uppercase;
 }
+.modal__save-not-accented-icon {
+  font-size: 0.8em;
+  opacity: 0.7;
+}
+.modal__save-favourite {
+  font-size: 0.8em;
+}
+.modal__save-right-side {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
 .modal__save-details {
   display: flex;
   flex-direction: column;
   max-width: 12rem;
-  padding-left: 0.6rem;
+  padding: 0 0.6rem;
   border-left: 1px solid rgba(153, 153, 153, 0.2);
+  border-right: 1px solid rgba(153, 153, 153, 0.2);
 }
 .modal__save-date {
   display: flex;
-  justify-content: right;
+  justify-content: center;
   gap: 0.6rem;
   font-size: 0.8em;
 }
-.modal__save-id {
-  font-size: 0.55em;
-  opacity: 0.6;
-  text-align: right;
+.modal__save-day {
+  opacity: 0.7;
+  font-size: 0.5em;
 }
 .modal__btns {
   display: flex;
@@ -689,6 +700,9 @@ h6 {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+.settings__item p {
+  margin-bottom: 0;
 }
 .settings__values {
   display: flex;
