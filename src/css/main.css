@@ -29,6 +29,7 @@ a:visited {
 }
 
 input,
+textarea,
 .btn {
   text-decoration: none;
   font-family: inherit;
@@ -571,6 +572,52 @@ h6 {
 }
 .stats__item--add:hover > i {
   transform: scale(1.2);
+}
+.stats__note {
+  background-color: #1f2128;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  padding: 0.6rem 0 0 0;
+}
+.stats__note-header {
+  padding: 0 0.9rem;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+.stats__note-header--left {
+  display: flex;
+  gap: 1.2rem;
+  width: 100%;
+}
+.stats__note-header--right {
+  font-size: 0.8em;
+  opacity: 0.75;
+  padding: 0.2rem 1.5rem;
+}
+.stats__note textarea {
+  background: #1b1c1f;
+  width: 100%;
+  min-height: 2.2rem;
+  height: 3.8rem;
+  resize: none;
+  padding: 0.6rem 0.9rem;
+  border-bottom-left-radius: 0.4rem;
+  border-bottom-right-radius: 0.4rem;
+}
+.stats__note textarea::-moz-selection {
+  color: #fff;
+  background: #7ab7e7;
+}
+.stats__note textarea::selection {
+  color: #fff;
+  background: #7ab7e7;
+}
+.stats__note textarea:focus {
+  outline: 1px solid #fff;
 }
 
 .value {

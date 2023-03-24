@@ -252,6 +252,40 @@
       </div>
     </template>
     <!-- end of edit stat -->
+    <!-- v-if edit node -->
+    <template v-if="isNodeEditing">
+      <div class="modal__card">
+        <div class="modal__header">
+          <h2>Изменить заметку</h2>
+          <div class="modal__close" @click="closeModal">&#10005;</div>
+        </div>
+        <!-- modal main content -->
+        <div class="modal__content">
+          <!-- input fields -->
+          <div class="modal__values">
+            <div class="modal__value">
+              <p>Имя:</p>
+              <input
+                class="modal__input"
+                type="text"
+                placeholder="Название (можно пустое)"
+                v-model="modalData.name"
+                @keyup.enter="applyNodeEdit"
+                @keyup.esc="closeModal"
+              />
+            </div>
+          </div>
+          <!-- end of input -->
+
+          <!-- btns -->
+          <div class="modal__btns">
+            <div class="btn btn-red" @click="closeModal">Отмена</div>
+            <div class="btn" @click="applyNodeEdit">Изменить</div>
+          </div>
+        </div>
+      </div>
+    </template>
+    <!-- end of edit note -->
     <!-- v-if edit name -->
     <template v-if="isNameEditing">
       <div class="modal__card">
@@ -670,6 +704,11 @@
       @removeCondition="removeCondition"
       @plusCondition="plusCondition"
       @changeReaction="changeReaction"
+      @addNote="addNote"
+      @copyCharacter="copyCharacter"
+      @updateNote="updateNote"
+      @spoilerNote="spoilerNote"
+      @editNote="editNote"
     ></character>
   </section>
 </template>
@@ -1179,6 +1218,7 @@ export default {
     let isStatAdding = ref(false);
     let isStatEditing = ref(false);
     let isNameEditing = ref(false);
+    let isNodeEditing = ref(false);
     let isConditionAdding = ref(false);
     let isSaveLoading = ref(false);
     let isGroupAdding = ref(false);
@@ -1325,6 +1365,40 @@ export default {
       closeModal();
     }
 
+    function addNote(idx) {
+      const generatedNote = {
+        name: "Заметка",
+        type: "note",
+        content: "",
+        height: "",
+        isSpoilerOpened: true,
+        isMenuShown: false,
+      };
+
+      characters[idx].stats.push(generatedNote);
+      closeModal();
+    }
+
+    function copyCharacter(idx) {
+      characters[idx].isMenuShown = false;
+      // console.log(characters[idx]);
+      const json = JSON.stringify(characters[idx]);
+      let newCharacter = JSON.parse(json);
+      // let newCharacter = characters[idx];
+      newCharacter.id = Date.now();
+      characters.push(newCharacter);
+      closeMenu();
+    }
+
+    function updateNote({ charIdx, statIdx, textarea }) {
+      characters[charIdx].stats[statIdx].content = textarea;
+    }
+
+    function spoilerNote({ charIdx, statIdx }) {
+      characters[charIdx].stats[statIdx].isSpoilerOpened =
+        !characters[charIdx].stats[statIdx].isSpoilerOpened;
+    }
+
     // clean all variables to make a new opened modal an empty one
     function cleanModalValues() {
       // showModal.value = false;
@@ -1347,6 +1421,7 @@ export default {
       isStatAdding.value = false;
       isStatEditing.value = false;
       isNameEditing.value = false;
+      isNodeEditing.value = false;
       isConditionAdding.value = false;
       isSaveLoading.value = false;
       isGroupAdding.value = false;
@@ -1685,6 +1760,30 @@ export default {
 
       closeModal();
       isNameEditing.value = false;
+    }
+
+    function editNote({ charIdx, statIdx }) {
+      setPointers({ charIdx, statIdx });
+      const editableNote = characters[charIdx].stats[statIdx];
+
+      closeStatMenuByClickOnCover();
+      cleanModalValues();
+      showModal.value = true;
+      isNodeEditing.value = true;
+
+      // set values depends on stat
+      modalData.name = editableNote.name;
+    }
+
+    function applyNodeEdit() {
+      const editableNote =
+        characters[currentEditable.charIdx].stats[currentEditable.statIdx];
+
+      editableNote.name = modalData.name;
+      editableNote.isMenuShown = false;
+
+      closeModal();
+      isNodeEditing.value = false;
     }
 
     // sort character's position
@@ -2045,6 +2144,7 @@ export default {
       isStatAdding,
       isStatEditing,
       isNameEditing,
+      isNodeEditing,
       isConditionAdding,
       isSaveLoading,
       isGroupAdding,
@@ -2088,6 +2188,10 @@ export default {
       removeCondition,
       plusCondition,
       addCondition,
+      updateNote,
+      spoilerNote,
+      editNote,
+      applyNodeEdit,
       openSaveModal,
       clearLocalStorage,
       addNewSaveToLocalStorage,
@@ -2102,6 +2206,8 @@ export default {
       changeReaction,
       clearSavesFromLocalStorage,
       clearGroupFromLocalStorage,
+      addNote,
+      copyCharacter,
     };
   },
 };

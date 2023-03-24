@@ -6,6 +6,7 @@
       `bg-${stat.color}`,
       stat.type === 'health' ? 'stats__item--wide' : '',
     ]"
+    v-if="stat.type !== 'note'"
   >
     <div
       class="stats__cover"
@@ -132,10 +133,84 @@
       </p>
     </div>
   </div>
+  <!-- spoiler -->
+  <div
+    class="stats__item stats__item--wide stats__note"
+    v-if="stat.type === 'note'"
+  >
+    <!-- menu -->
+    <div
+      class="menu"
+      v-if="stat.isMenuShown"
+      :style="[
+        isClickedOnRightHalf ? 'right: 0.3rem' : 'left: 0.3rem',
+        isClickedOnBottom
+          ? 'bottom: 3.3rem; flex-direction: column-reverse;'
+          : 'top: 3.3rem',
+      ]"
+    >
+      <div class="menu__item">
+        <p class="menu__btn" @click="editNote()">Изменить</p>
+      </div>
+
+      <!-- reverse position of safe space is clicked on bottom of screen -->
+      <div
+        class="menu__item"
+        :style="[
+          isClickedOnBottom
+            ? 'display: flex; flex-direction: column-reverse;'
+            : '',
+        ]"
+      >
+        <div
+          class="menu__safe-space"
+          :style="[
+            isClickedOnBottom
+              ? 'border-bottom: 1px solid rgba(153, 153, 153, 0.1);'
+              : '',
+          ]"
+        ></div>
+        <p class="menu__btn" @click="removeStat">Удалить 💀</p>
+      </div>
+    </div>
+    <!-- end of menu -->
+
+    <div
+      class="stats__note-header"
+      :style="[stat.isSpoilerOpened ? '' : 'paddingBottom: 0.6rem']"
+    >
+      <div class="stats__note-header--left" @click.stop="spoilerNote()">
+        <i
+          class="fa-solid fa-angle-right"
+          :class="[stat.isSpoilerOpened ? 'fa-rotate-90' : '']"
+        ></i>
+        <div class="stats__item-name">{{ stat.name }}</div>
+      </div>
+      <div class="stats__note-header--right">
+        <i
+          class="fa-solid fa-pencil"
+          @click="
+            openStatMenu();
+            getMousePosition($event);
+          "
+        ></i>
+      </div>
+    </div>
+    <textarea
+      v-show="stat.isSpoilerOpened"
+      v-model="textarea"
+      @input="
+        resizeTextarea();
+        updateNote();
+      "
+      ref="textareaElement"
+    ></textarea>
+  </div>
+  <!-- end of spoiler -->
 </template>
 
 <script>
-import { computed, ref } from "vue";
+import { computed, ref, onMounted, nextTick } from "vue";
 export default {
   props: ["stat", "idx", "isMenuPositionBlocked"],
   emits: [
@@ -145,6 +220,9 @@ export default {
     "toggleStat",
     "blockMenuPos",
     "editStat",
+    "updateNote",
+    "spoilerNote",
+    "editNote",
   ],
   setup(props, context) {
     const healthPercentage = computed(() => {
@@ -196,16 +274,74 @@ export default {
       context.emit("editStat", props.idx);
     }
 
+    onMounted(() => {
+      if (props.stat.type === "note") {
+        let textareaHeight = 3;
+
+        if (window.innerWidth > 430 && window.innerWidth <= 480) {
+          textareaHeight = 3.4;
+        } else if (window.innerWidth > 480) {
+          textareaHeight = 3.8;
+        }
+        textareaHeight = textareaHeight * 10 + "px";
+        textareaElement.value.style.height = textareaHeight;
+        resizeTextarea();
+      }
+    });
+
+    const textareaElement = ref("");
+    let textarea = ref("");
+
+    function resizeTextarea() {
+      if (props.stat.isSpoilerOpened) {
+        textareaElement.value.style.height =
+          textareaElement.value.scrollHeight + "px";
+      }
+    }
+
+    function fullfillNote() {
+      if (props.stat.type === "note") {
+        textarea.value = props.stat.content;
+      }
+    }
+
+    fullfillNote();
+
+    function updateNote() {
+      context.emit("updateNote", {
+        statIdx: props.idx,
+        textarea: textarea.value,
+      });
+    }
+
+    async function spoilerNote() {
+      context.emit("spoilerNote", props.idx);
+      if (props.stat.isSpoilerOpened) {
+        await nextTick();
+        resizeTextarea();
+      }
+    }
+
+    function editNote() {
+      context.emit("editNote", props.idx);
+    }
+
     return {
       healthPercentage,
       isClickedOnRightHalf,
       isClickedOnBottom,
+      textarea,
+      textareaElement,
       removeStat,
       openStatMenu,
       getMousePosition,
       changeStat,
       toggleStat,
       editStat,
+      resizeTextarea,
+      updateNote,
+      spoilerNote,
+      editNote,
     };
   },
 };

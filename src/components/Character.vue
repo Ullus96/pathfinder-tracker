@@ -9,7 +9,7 @@
         isClickedOnBottom
           ? isRepositionShown || isReactionShown
             ? 'top: -3.3rem; flex-direction: column-reverse;'
-            : 'top: -13.3rem; flex-direction: column-reverse;'
+            : 'top: -21.3rem; flex-direction: column-reverse;'
           : 'top: 3.3rem',
       ]"
     >
@@ -62,6 +62,12 @@
         </div>
         <div class="menu__item">
           <p class="menu__btn" @click="plusCondition">Доб. состояние</p>
+        </div>
+        <div class="menu__item">
+          <p class="menu__btn" @click="addNote">Доб. заметку</p>
+        </div>
+        <div class="menu__item">
+          <p class="menu__btn" @click="copyCharacter">Копировать</p>
         </div>
         <!-- reverse position of safe space is clicked on bottom of screen -->
         <div
@@ -148,6 +154,9 @@
         @toggleStat="toggleStat"
         @blockMenuPos="blockMenuPos"
         @editStat="editStat"
+        @updateNote="updateNote"
+        @spoilerNote="spoilerNote"
+        @editNote="editNote"
       >
       </stat>
       <!-- end of single stat -->
@@ -199,6 +208,11 @@ export default {
     "removeCondition",
     "plusCondition",
     "changeReaction",
+    "addNote",
+    "copyCharacter",
+    "updateNote",
+    "spoilerNote",
+    "editNote",
   ],
   setup(props, context) {
     function removeCharacter() {
@@ -223,6 +237,14 @@ export default {
 
     function plusCondition() {
       context.emit("plusCondition", props.i);
+    }
+
+    function addNote() {
+      context.emit("addNote", props.i);
+    }
+
+    function copyCharacter() {
+      context.emit("copyCharacter", props.i);
     }
 
     // get index of stat and send it to App.vue
@@ -274,7 +296,7 @@ export default {
         }
 
         // check if mouse clicked on bottom 80% of a page
-        if (e.clientY > window.innerHeight * 0.8) {
+        if (e.clientY > window.innerHeight * 0.7) {
           isClickedOnBottom.value = true;
           console.log(e);
         } else {
@@ -337,6 +359,22 @@ export default {
       context.emit("changeReaction", { charIdx: props.i, val });
     }
 
+    function updateNote({ statIdx, textarea }) {
+      context.emit("updateNote", {
+        charIdx: props.i,
+        statIdx,
+        textarea,
+      });
+    }
+
+    function spoilerNote(statIdx) {
+      context.emit("spoilerNote", { charIdx: props.i, statIdx });
+    }
+
+    function editNote(statIdx) {
+      context.emit("editNote", { charIdx: props.i, statIdx });
+    }
+
     return {
       isClickedOnRightHalf,
       isClickedOnBottom,
@@ -362,6 +400,11 @@ export default {
       removeCondition,
       plusCondition,
       changeReaction,
+      addNote,
+      copyCharacter,
+      updateNote,
+      spoilerNote,
+      editNote,
     };
   },
 };
