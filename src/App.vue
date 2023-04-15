@@ -404,7 +404,7 @@
           </div>
 
           <!-- available saves list -->
-          <div class="modal__block">
+          <div class="modal__block mb-medium">
             <div class="modal__title">
               <h4 class="modal__title--text">Доступные сохранения</h4>
             </div>
@@ -472,19 +472,23 @@
         <!-- modal main content -->
         <div class="modal__content">
           <!-- group names -->
-          <div class="modal__title">
-            <h4 class="modal__title--text">Текущая группа:</h4>
+          <div class="modal__block mb-medium">
+            <div class="modal__title">
+              <h4 class="modal__title--text">Текущая группа:</h4>
+            </div>
+            <p class="modal__group-names">
+              <template v-if="groupData">
+                <template v-for="(char, i) in groupData" :key="i">
+                  {{
+                    i === groupData.length - 1
+                      ? `${char.name}`
+                      : `${char.name}, `
+                  }}</template
+                ></template
+              >
+              <template v-else>В вашей группе пока нет членов</template>
+            </p>
           </div>
-          <p class="modal__group-names">
-            <template v-if="groupData">
-              <template v-for="(char, i) in groupData" :key="i">
-                {{
-                  i === groupData.length - 1 ? `${char.name}` : `${char.name}, `
-                }}</template
-              ></template
-            >
-            <template v-else>В вашей группе пока нет членов</template>
-          </p>
           <!-- end of names -->
 
           <!-- btns -->
@@ -583,15 +587,24 @@
           <!-- settings end -->
 
           <!-- credits; later move to other modal -->
-          <div class="modal__block" v-if="hideFromProduction">
+          <div class="modal__block mb-medium">
             <div class="modal__title">
-              <h4 class="modal__title--text"></h4>
+              <h4 class="modal__title--text">Авторство</h4>
             </div>
-            <p>
-              Оригинальная идея - Pathfinder 2e Combat Tracker от Gamedev Bram
+            <p class="modal__author-text">
+              Оригинальная идея -<br />
+              <a href="https://gamedevbram.itch.io/pathfinder-2e-combat-tracker"
+                ><i class="fa-solid fa-up-right-from-square"></i> Pathfinder 2e
+                Combat Tracker</a
+              ><br />
+              от
+              <a href="https://twitter.com/gamedevbram"
+                ><i class="fa-brands fa-twitter"></i>Gamedev Bram</a
+              >
             </p>
-            <p>https://gamedevbram.itch.io/pathfinder-2e-combat-tracker</p>
-            <p>https://twitter.com/gamedevbram</p>
+            <p class="modal__author-text--sub">
+              Данное веб-приложение является доработкой под свои нужды
+            </p>
           </div>
           <!-- end of credits -->
 
@@ -748,7 +761,17 @@ export default {
         "fire",
       ],
       activeColor: 0,
-      colors: ["blue", "red", "yellow", "green", "white"],
+      colors: [
+        "blue",
+        "red",
+        "yellow",
+        "green",
+        "white",
+        "darkblue",
+        "orange",
+        "gray",
+        "black",
+      ],
       name: "",
       current: "",
       max: "",

@@ -186,14 +186,14 @@
         ></i>
         <div class="stats__item-name">{{ stat.name }}</div>
       </div>
-      <div class="stats__note-header--right">
-        <i
-          class="fa-solid fa-pencil"
-          @click="
-            openStatMenu();
-            getMousePosition($event);
-          "
-        ></i>
+      <div
+        class="stats__note-header--right"
+        @click="
+          openStatMenu();
+          getMousePosition($event);
+        "
+      >
+        <i class="fa-solid fa-pencil"></i>
       </div>
     </div>
     <textarea

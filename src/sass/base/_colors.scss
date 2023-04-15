@@ -38,6 +38,40 @@
 			background-color: darken($color-white, 10%);
 		}
 	}
+
+	&-darkblue {
+		background-color: $color-darkblue;
+		color: $color-white;
+
+		&:hover {
+			background-color: darken($color-darkblue, 4%);
+		}
+	}
+
+	&-orange {
+		background-color: $color-orange;
+
+		&:hover {
+			background-color: darken($color-orange, 8%);
+		}
+	}
+
+	&-gray {
+		background-color: $color-gray;
+
+		&:hover {
+			background-color: darken($color-gray, 10%);
+		}
+	}
+
+	&-black {
+		background-color: $color-black;
+		color: $color-white;
+
+		&:hover {
+			background-color: lighten($color-black, 10%);
+		}
+	}
 }
 
 .text {
@@ -59,5 +93,21 @@
 
 	&-white {
 		color: $color-white;
+	}
+
+	&-darkblue {
+		color: $color-darkblue;
+	}
+
+	&-orange {
+		color: $color-orange;
+	}
+
+	&-gray {
+		color: $color-gray;
+	}
+
+	&-black {
+		color: $color-black;
 	}
 }

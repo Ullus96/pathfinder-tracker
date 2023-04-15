@@ -1,0 +1,25 @@
+.mb {
+	&-none {
+		margin-bottom: 0 !important;
+	}
+
+	&-small {
+		margin-bottom: 0.3rem !important;
+	}
+
+	&-medium {
+		margin-bottom: 0.6rem !important;
+	}
+
+	&-big {
+		margin-bottom: 0.9rem !important;
+	}
+
+	&-large {
+		margin-bottom: 1.2rem !important;
+	}
+
+	&-huge {
+		margin-bottom: 1.8rem !important;
+	}
+}

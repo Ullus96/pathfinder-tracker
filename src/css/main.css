@@ -137,6 +137,32 @@ h6 {
 .bg-white:hover {
   background-color: #e6e6e6;
 }
+.bg-darkblue {
+  background-color: #051985;
+  color: #fff;
+}
+.bg-darkblue:hover {
+  background-color: #041571;
+}
+.bg-orange {
+  background-color: #d5551d;
+}
+.bg-orange:hover {
+  background-color: #b14718;
+}
+.bg-gray {
+  background-color: #a9a6a3;
+}
+.bg-gray:hover {
+  background-color: #908d89;
+}
+.bg-black {
+  background-color: #000000;
+  color: #fff;
+}
+.bg-black:hover {
+  background-color: #1a1a1a;
+}
 
 .text-blue {
   color: #7ab7e7;
@@ -152,6 +178,37 @@ h6 {
 }
 .text-white {
   color: #fff;
+}
+.text-darkblue {
+  color: #051985;
+}
+.text-orange {
+  color: #d5551d;
+}
+.text-gray {
+  color: #a9a6a3;
+}
+.text-black {
+  color: #000000;
+}
+
+.mb-none {
+  margin-bottom: 0 !important;
+}
+.mb-small {
+  margin-bottom: 0.3rem !important;
+}
+.mb-medium {
+  margin-bottom: 0.6rem !important;
+}
+.mb-big {
+  margin-bottom: 0.9rem !important;
+}
+.mb-large {
+  margin-bottom: 1.2rem !important;
+}
+.mb-huge {
+  margin-bottom: 1.8rem !important;
 }
 
 .header {
@@ -455,8 +512,19 @@ h6 {
   vertical-align: middle;
 }
 .modal__group-names {
-  margin-bottom: 1.5rem;
   text-align: center;
+}
+.modal__author-text {
+  text-align: center;
+  margin-bottom: 0.6rem;
+}
+.modal__author-text a {
+  text-decoration: underline;
+}
+.modal__author-text--sub {
+  text-align: center;
+  font-size: 0.6em;
+  opacity: 0.8;
 }
 
 .person {
@@ -578,7 +646,6 @@ h6 {
   color: #fff;
   display: flex;
   flex-direction: column;
-  align-items: start;
   padding: 0.6rem 0 0 0;
 }
 .stats__note-header {

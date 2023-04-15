@@ -264,7 +264,22 @@
 
 	// group
 	&__group-names {
-		margin-bottom: 1.5rem;
 		text-align: center;
+	}
+
+	// author
+	&__author-text {
+		text-align: center;
+		margin-bottom: 0.6rem;
+
+		& a {
+			text-decoration: underline;
+		}
+
+		&--sub {
+			text-align: center;
+			font-size: 0.6em;
+			opacity: 0.8;
+		}
 	}
 }
