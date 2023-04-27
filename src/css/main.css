@@ -320,6 +320,11 @@ h6 {
   border-radius: 0.6rem;
   overflow: hidden;
 }
+@media (max-width: 800px) {
+  .modal__card {
+    top: 42%;
+  }
+}
 .modal__header {
   position: relative;
   text-align: center;
