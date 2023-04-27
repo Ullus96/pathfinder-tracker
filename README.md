@@ -1,24 +1,6 @@
-# pathfinder-tracker
+# Pathfinder 2e Combat Tracker
 
-## Project setup
-```
-npm install
-```
+Веб-приложение на основе [Pathfinder 2e Combat Tracker](https://gamedevbram.itch.io/pathfinder-2e-combat-tracker) от [Gamedev Bram](https://twitter.com/gamedevbram)
+Является доработанной портированной версией под свои нужды.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+[Попробовать прототип](https://pathfinder-tracker-vue.web.app/)
