@@ -13,27 +13,6 @@
           : 'top: 3.3rem',
       ]"
     >
-      <!-- position menu -->
-      <!-- <template v-if="isRepositionShown">
-        <div class="menu__item">
-          <div class="menu__counters">
-            <div class="menu__counter menu__btn" @click="sortCharacter('top')">
-              <i class="fa-solid fa-angles-up"></i>
-            </div>
-            <div class="menu__counter menu__btn" @click="sortCharacter(-1)">
-              <i class="fa-solid fa-angle-up"></i>
-            </div>
-            <div class="menu__counter menu__btn" @click="sortCharacter(1)">
-              <i class="fa-solid fa-angle-down"></i>
-            </div>
-            <div class="menu__counter menu__btn" @click="sortCharacter('bot')">
-              <i class="fa-solid fa-angles-down"></i>
-            </div>
-          </div>
-        </div>
-      </template> -->
-      <!-- end of position menu -->
-
       <!-- reaction menu -->
       <template v-if="isReactionShown">
         <div class="menu__item">
@@ -157,6 +136,7 @@
         @updateNote="updateNote"
         @spoilerNote="spoilerNote"
         @editNote="editNote"
+        @moveStat="moveStat"
       >
       </stat>
       <!-- end of single stat -->
@@ -201,7 +181,6 @@ export default {
     "blockMenuPos",
     "editStat",
     "editName",
-    "sortCharacter",
     "openConditionMenu",
     "changeCondition",
     "toggleCondition",
@@ -213,6 +192,7 @@ export default {
     "updateNote",
     "spoilerNote",
     "editNote",
+    "moveStat",
   ],
   setup(props, context) {
     function removeCharacter() {
@@ -350,11 +330,6 @@ export default {
       context.emit("editName", props.i);
     }
 
-    // emit charIdx and val (top, +1, -1, bot) to change position of character
-    function sortCharacter(val) {
-      context.emit("sortCharacter", { charIdx: props.i, val });
-    }
-
     function changeReaction(val) {
       context.emit("changeReaction", { charIdx: props.i, val });
     }
@@ -375,6 +350,10 @@ export default {
       context.emit("editNote", { charIdx: props.i, statIdx });
     }
 
+    function moveStat({ statIdx, val }) {
+      context.emit("moveStat", { charIdx: props.i, statIdx, val });
+    }
+
     return {
       isClickedOnRightHalf,
       isClickedOnBottom,
@@ -393,7 +372,6 @@ export default {
       blockMenuPos,
       editStat,
       editName,
-      sortCharacter,
       openConditionMenu,
       changeCondition,
       toggleCondition,
@@ -405,6 +383,7 @@ export default {
       updateNote,
       spoilerNote,
       editNote,
+      moveStat,
     };
   },
 };

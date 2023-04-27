@@ -55,6 +55,23 @@
       </div>
 
       <div class="menu__item">
+        <div class="menu__counters">
+          <div class="menu__counter menu__btn" @click="moveStat('top')">
+            <i class="fa-solid fa-angles-up"></i>
+          </div>
+          <div class="menu__counter menu__btn" @click="moveStat(-1)">
+            <i class="fa-solid fa-angle-up"></i>
+          </div>
+          <div class="menu__counter menu__btn" @click="moveStat(1)">
+            <i class="fa-solid fa-angle-down"></i>
+          </div>
+          <div class="menu__counter menu__btn" @click="moveStat('bot')">
+            <i class="fa-solid fa-angles-down"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu__item">
         <p class="menu__btn" @click="editStat()">Изменить</p>
       </div>
 
@@ -145,10 +162,26 @@
       :style="[
         isClickedOnRightHalf ? 'right: 0.3rem' : 'left: 0.3rem',
         isClickedOnBottom
-          ? 'bottom: 3.3rem; flex-direction: column-reverse;'
+          ? 'bottom: 7.3rem; flex-direction: column-reverse;'
           : 'top: 3.3rem',
       ]"
     >
+      <div class="menu__item">
+        <div class="menu__counters">
+          <div class="menu__counter menu__btn" @click="moveStat('top')">
+            <i class="fa-solid fa-angles-up"></i>
+          </div>
+          <div class="menu__counter menu__btn" @click="moveStat(-1)">
+            <i class="fa-solid fa-angle-up"></i>
+          </div>
+          <div class="menu__counter menu__btn" @click="moveStat(1)">
+            <i class="fa-solid fa-angle-down"></i>
+          </div>
+          <div class="menu__counter menu__btn" @click="moveStat('bot')">
+            <i class="fa-solid fa-angles-down"></i>
+          </div>
+        </div>
+      </div>
       <div class="menu__item">
         <p class="menu__btn" @click="editNote()">Изменить</p>
       </div>
@@ -223,6 +256,7 @@ export default {
     "updateNote",
     "spoilerNote",
     "editNote",
+    "moveStat",
   ],
   setup(props, context) {
     const healthPercentage = computed(() => {
@@ -326,6 +360,10 @@ export default {
       context.emit("editNote", props.idx);
     }
 
+    function moveStat(val) {
+      context.emit("moveStat", { statIdx: props.idx, val });
+    }
+
     return {
       healthPercentage,
       isClickedOnRightHalf,
@@ -342,6 +380,7 @@ export default {
       updateNote,
       spoilerNote,
       editNote,
+      moveStat,
     };
   },
 };

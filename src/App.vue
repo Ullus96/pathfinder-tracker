@@ -710,7 +710,6 @@
       @blockMenuPos="blockMenuPos"
       @editStat="editStat"
       @editName="editName"
-      @sortCharacter="sortCharacter"
       @openConditionMenu="openConditionMenu"
       @changeCondition="changeCondition"
       @toggleCondition="toggleCondition"
@@ -722,6 +721,7 @@
       @updateNote="updateNote"
       @spoilerNote="spoilerNote"
       @editNote="editNote"
+      @moveStat="moveStat"
     ></character>
   </section>
 </template>
@@ -1809,38 +1809,6 @@ export default {
       isNodeEditing.value = false;
     }
 
-    // sort character's position
-    // not in use anymore
-    function sortCharacter(payload) {
-      setPointers(payload.charIdx);
-      const editableChar = characters[currentEditable.charIdx];
-      const editableIdx = currentEditable.charIdx;
-      let targetIdx;
-
-      // check target index
-      if (typeof payload.val === "number") {
-        targetIdx = editableIdx + payload.val;
-        // check border values
-        targetIdx < 0
-          ? (targetIdx = 0)
-          : targetIdx > characters.length - 1
-          ? (targetIdx = characters.length - 1)
-          : "";
-      } else {
-        payload.val === "top"
-          ? (targetIdx = 0)
-          : (targetIdx = characters.length - 1);
-      }
-
-      // close menu with it's cover
-      editableChar.isMenuShown = false;
-      closeStatMenuByClickOnCover();
-      // delete 1 element from the character's index (character itself)
-      characters.splice(editableIdx, 1);
-      // paste at target index with 0 deleted elements relocated character
-      characters.splice(targetIdx, 0, editableChar);
-    }
-
     // Reaction
     let isSortingByReactionActive = ref(false);
 
@@ -1866,6 +1834,35 @@ export default {
         sortByReaction();
         isSortingByReactionActive.value = true;
       }
+    }
+
+    // Stats reposition
+    function moveStat({ charIdx, statIdx, val }) {
+      const movableStat = characters[charIdx].stats[statIdx];
+      let targetIdx;
+
+      // if we got a -1 or +1 val (instead of "min", "max")
+      if (typeof val === "number") {
+        targetIdx = statIdx + val;
+        // check border values
+        if (targetIdx < 0) {
+          targetIdx = 0;
+        } else if (targetIdx > characters[charIdx].stats.length - 1) {
+          targetIdx = characters[charIdx].stats.length - 1;
+        }
+      } else {
+        val === "top"
+          ? (targetIdx = 0)
+          : (targetIdx = characters[charIdx].stats.length - 1);
+      }
+
+      // close menu with its' cover
+      movableStat.isMenuShown = false;
+      closeStatMenuByClickOnCover();
+      // delete movable stat from the stats array
+      characters[charIdx].stats.splice(statIdx, 1);
+      // paste the movable stat at the target index with 0 deleted elements
+      characters[charIdx].stats.splice(targetIdx, 0, movableStat);
     }
 
     // Turn counter
@@ -2199,12 +2196,12 @@ export default {
       applyEdit,
       editName,
       applyName,
-      sortCharacter,
       makeTurn,
       resetTurns,
       sortById,
       sortByReaction,
       sortCharacters,
+      moveStat,
       openConditionMenu,
       changeCondition,
       toggleCondition,
