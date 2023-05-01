@@ -3,17 +3,15 @@
     :showModal="showModal"
     :isStatAdding="isStatAdding"
     :isStatEditing="isStatEditing"
-    :isNodeEditing="isNodeEditing"
+    :isNoteEditing="isNoteEditing"
     :isNameEditing="isNameEditing"
     :isConditionAdding="isConditionAdding"
     :isSaveLoading="isSaveLoading"
     :isGroupAdding="isGroupAdding"
     :isSettingsOpen="isSettingsOpen"
     :modalData="modalData"
-    :modalCalc="modalCalc"
-    @update:modalCalc="updateModalCalc"
-    :newSaveName="newSaveName"
-    @update:newSaveName="updateNewSaveName"
+    @updateModalCalc="updateModalCalc"
+    @updateNewSaveName="updateNewSaveName"
     :saveNames="saveNames"
     :activeSave="activeSave"
     :groupData="groupData"
@@ -22,7 +20,7 @@
     @chooseType="chooseType"
     @addStat="addStat"
     @applyEdit="applyEdit"
-    @applyNodeEdit="applyNodeEdit"
+    @applyNoteEdit="applyNoteEdit"
     @applyName="applyName"
     @addCondition="addCondition"
     @addNewSaveToLocalStorage="addNewSaveToLocalStorage"
@@ -56,10 +54,6 @@
         </li>
       </div>
       <div class="header__right-btns">
-        <li class="header__button text-blue" @click="openGroupModal">
-          <i class="fa-sharp fa-regular fa-plus"></i>
-          <i class="fa-solid fa-user-group"></i>
-        </li>
         <li
           class="header__button text-yellow"
           @click="addCharacter('Заметка', 'yellow', 'note')"
@@ -663,7 +657,7 @@ export default {
     let isStatAdding = ref(false);
     let isStatEditing = ref(false);
     let isNameEditing = ref(false);
-    let isNodeEditing = ref(false);
+    let isNoteEditing = ref(false);
     let isConditionAdding = ref(false);
     let isSaveLoading = ref(false);
     let isGroupAdding = ref(false);
@@ -866,7 +860,7 @@ export default {
       isStatAdding.value = false;
       isStatEditing.value = false;
       isNameEditing.value = false;
-      isNodeEditing.value = false;
+      isNoteEditing.value = false;
       isConditionAdding.value = false;
       isSaveLoading.value = false;
       isGroupAdding.value = false;
@@ -1218,13 +1212,13 @@ export default {
       closeStatMenuByClickOnCover();
       cleanModalValues();
       showModal.value = true;
-      isNodeEditing.value = true;
+      isNoteEditing.value = true;
 
       // set values depends on stat
       modalData.name = editableNote.name;
     }
 
-    function applyNodeEdit() {
+    function applyNoteEdit() {
       const editableNote =
         characters[currentEditable.charIdx].stats[currentEditable.statIdx];
 
@@ -1232,7 +1226,7 @@ export default {
       editableNote.isMenuShown = false;
 
       closeModal();
-      isNodeEditing.value = false;
+      isNoteEditing.value = false;
     }
 
     // Reaction
@@ -1598,7 +1592,7 @@ export default {
       isStatAdding,
       isStatEditing,
       isNameEditing,
-      isNodeEditing,
+      isNoteEditing,
       isConditionAdding,
       isSaveLoading,
       isGroupAdding,
@@ -1646,7 +1640,7 @@ export default {
       updateNote,
       spoilerNote,
       editNote,
-      applyNodeEdit,
+      applyNoteEdit,
       openSaveModal,
       clearLocalStorage,
       updateNewSaveName,

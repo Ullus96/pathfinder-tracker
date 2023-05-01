@@ -294,7 +294,7 @@ h6 {
 }
 
 .modal {
-  position: absolute;
+  position: fixed;
   top: 0;
   bottom: 0;
   left: 0;
@@ -303,7 +303,7 @@ h6 {
 }
 .modal__cover {
   background-color: rgba(4, 4, 5, 0.7);
-  position: absolute;
+  position: fixed;
   top: 0;
   bottom: 0;
   left: 0;
@@ -319,10 +319,11 @@ h6 {
   width: 85%;
   border-radius: 0.6rem;
   overflow: hidden;
+  max-height: 88%;
 }
 @media (max-width: 800px) {
   .modal__card {
-    top: 42%;
+    top: 46%;
   }
 }
 .modal__header {
@@ -446,6 +447,7 @@ h6 {
   flex-wrap: wrap;
   gap: 0.6rem;
   justify-content: left;
+  max-height: 40rem;
 }
 .modal__save {
   justify-content: left;
@@ -530,6 +532,32 @@ h6 {
   text-align: center;
   font-size: 0.6em;
   opacity: 0.8;
+}
+.modal__states {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+}
+.modal__state-item {
+  flex: 0 0 50%;
+  text-align: center;
+  padding: 0.6rem 0.6rem;
+  cursor: pointer;
+  transition: all 0.1s ease-in-out;
+}
+.modal__state-item:nth-child(1) {
+  border-right: 1px solid rgba(255, 255, 255, 0.7);
+}
+.modal__state-item:hover {
+  background-color: #1f222e;
+}
+.modal__state-item.active {
+  background-color: #23262e;
+  transition: all 0.1s ease-in-out;
+}
+.modal__state-item.active:hover {
+  background-color: #1f222e;
 }
 
 .person {

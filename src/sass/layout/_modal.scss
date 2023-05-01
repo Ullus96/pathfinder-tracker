@@ -1,5 +1,5 @@
 .modal {
-	position: absolute;
+	position: fixed;
 	top: 0;
 	bottom: 0;
 	left: 0;
@@ -8,7 +8,7 @@
 
 	&__cover {
 		background-color: rgba(mix($color-black, $color-bg-darkest, 90%), 0.7);
-		position: absolute;
+		position: fixed;
 		top: 0;
 		bottom: 0;
 		left: 0;
@@ -25,9 +25,10 @@
 		width: 85%;
 		border-radius: 0.6rem;
 		overflow: hidden;
+		max-height: 88%;
 
 		@media (max-width: 800px) {
-			top: 42%;
+			top: 46%;
 		}
 	}
 
@@ -182,6 +183,7 @@
 		flex-wrap: wrap;
 		gap: 0.6rem;
 		justify-content: left;
+		max-height: 40rem;
 	}
 
 	&__save {
@@ -285,5 +287,38 @@
 			font-size: 0.6em;
 			opacity: 0.8;
 		}
+	}
+
+	// states
+	&__states {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-content: center;
+	}
+
+	&__state-item {
+		flex: 0 0 50%;
+		text-align: center;
+		padding: 0.6rem 0.6rem;
+		cursor: pointer;
+		transition: all 0.1s ease-in-out;
+	}
+
+	&__state-item:nth-child(1) {
+		border-right: 1px solid rgba($color-white, 0.7);
+	}
+
+	&__state-item:hover {
+		background-color: $color-bg-darker;
+	}
+
+	&__state-item.active {
+		background-color: $color-bg-darkest;
+		transition: all 0.1s ease-in-out;
+	}
+
+	&__state-item.active:hover {
+		background-color: $color-bg-darker;
 	}
 }
